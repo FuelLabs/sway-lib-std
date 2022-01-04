@@ -9,6 +9,6 @@ dep contract_id;
 dep context;
 dep address;
 dep block;
-dep ecr
+dep ecr;
 
 use core::*;

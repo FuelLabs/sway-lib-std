@@ -8,7 +8,7 @@ use ::chain::assert;
 pub fn ec_recover(signature: B512, msg_hash: b256) -> B512 {
     let public_key = ~B512::new();
 
-    public_key.hi = asm(buffer, hi: signature.hi, hash: msg_hash) {
+    let hi = asm(buffer, hi: signature.hi, hash: msg_hash) {
         move buffer sp; // Result buffer.
         cfei i32;
         ecr buffer hi hash;
@@ -23,6 +23,7 @@ pub fn ec_recover(signature: B512, msg_hash: b256) -> B512 {
         mcpi buffer lo_ptr i32; // copy 32 bytes starting at lo_ptr into buffer
         buffer: b256
     };
+    public_key.hi = hi;
     public_key
 }
 

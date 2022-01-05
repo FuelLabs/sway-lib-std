@@ -19,10 +19,10 @@ pub fn ec_recover(signature: B512, msg_hash: b256) -> B512 {
 
     // a `B512`'s 2 internal values are stored in contiguous memory. This asm block takes a pointer to the initial value (public_key.hi) and should retrieve the lo value from memory and return it to be stored in public_key.lo.
     public_key.lo = asm(buffer, hi_ptr: public_key.hi, lo_ptr) {
-        move buffer sp;
-        cfei i32;
         move hi_ptr sp;
         cfei i64;
+        move buffer sp;
+        cfei i32;
         addi lo_ptr hi_ptr i32; // set lo_ptr equal to hi_ptr + 32 bytes
         move lo_ptr sp;
         cfei i32;

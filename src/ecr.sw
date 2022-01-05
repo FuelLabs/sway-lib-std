@@ -14,24 +14,15 @@ pub fn ec_recover(signature: B512, msg_hash: b256) -> B512 {
         ecr buffer hi hash;
         buffer: b256
     };
-    // @note temp
-    assert(public_key.hi == 0x1d152307c6b72b0ed0418b0e70cd80e7f5295b8d86f5722d3f5213fbd2394f36);
 
     // a `B512`'s 2 internal values are stored in contiguous memory. This asm block takes a pointer to the initial value (public_key.hi) and should retrieve the lo value from memory and return it to be stored in public_key.lo.
     public_key.lo = asm(buffer, hi_ptr: public_key.hi, lo_ptr) {
-        move hi_ptr sp;
-        cfei i64;
         move buffer sp;
         cfei i32;
         addi lo_ptr hi_ptr i32; // set lo_ptr equal to hi_ptr + 32 bytes
-        move lo_ptr sp;
-        cfei i32;
         mcpi buffer lo_ptr i32; // copy 32 bytes starting at lo_ptr into buffer
         buffer: b256
     };
-    // @note temp
-    assert(public_key.lo == 0xb7ce9c3e45905178455900b44abb308f3ef480481a4b2ee3f70aca157fde396a);
-
     public_key
 }
 

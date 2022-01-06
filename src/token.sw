@@ -78,6 +78,6 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
 /// Use of this function can lead to irretrievable loss of coins if not used with caution.
 pub fn force_transfer(amount: u64, asset_id: ContractId, contract_id: ContractId) {
     asm(r1: amount, r2: asset_id.value, r3: contract_id.value) {
-        tr id r1 r2;
+        tr r3 r1 r2;
     }
 }

@@ -2,11 +2,11 @@ library token;
 //! Functionality for performing common operations on tokens.
 
 use ::address::Address;
-use ::contract_id::ContractId;
 use ::chain::panic;
+use ::contract_id::ContractId;
 
 // note: if tx format changes, the magic number "48" must be changed !
-/// TransactionScript outputsCount has a 48 byte(6 words * 8) offset
+/// TransactionScript outputsCount has a 48 byte(6 words * 8 bytes) offset
 /// Transaction Script: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#transactionscript
 /// Output types: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#output
 const OUTPUT_LENGTH_LOCATION = 48;
@@ -68,13 +68,14 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
             }
         }
     }
-    // If no suitable output was found, revert.
-    if output_found {
-        asm(amnt: amount, id: asset_id.value, recipient, output: index) {
-            tro recipient output amnt id;
-        }
-    } else {
-        panic(0)
+
+    if !output_found {
+        // If no suitable output was found, revert.
+        panic(0);
+    };
+
+    asm(amnt: amount, id: asset_id.value, recipient, output: index) {
+        tro recipient output amnt id;
     }
 }
 

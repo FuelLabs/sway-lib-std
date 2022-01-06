@@ -67,12 +67,12 @@ pub fn transfer_to_output(coins: u64, asset_id: b256, recipient: Address) {
         panic(0)
     };
 
-    asm(amount: coins, id: token_id, recipient, output: index) {
+    asm(amount: coins, id: asset_id, recipient, output: index) {
         tro recipient output amount id;
     }
 }
 
-/// !!! UNCONDITIONAL transfer of amount `coins` of type `token_id` to contract at `contract_id`.
+/// !!! UNCONDITIONAL transfer of amount `coins` of type `asset_id` to contract at `contract_id`.
 /// This will allow the transfer of coins even if there is no way to retrieve them !!!
 /// Use of this function can lead to irretrievable loss of coins if not used with caution.
 // @todo use type `ContractId` if implemented.

@@ -5,8 +5,6 @@ use ::address::Address;
 
 /// Recover the address derived from the private key used to sign a message
 pub fn ec_recover_address(signature: B512, msg_hash: b256) -> Address {
-    // ECR: "The 64-byte public key (x, y) recovered from 64-byte signature starting at $rB on 32-byte message hash starting at $rC"
-    // s256: The sha-256 hash of $rC bytes starting at $rB.
     let address = asm(pub_key_buffer, sig_ptr: signature.hi, hash: msg_hash, addr_buffer, sixty_four: 64) {
         move pub_key_buffer sp; // mv sp to pub_key result buffer.
         cfei i64;

@@ -10,4 +10,6 @@ dep context;
 dep address;
 dep block;
 dep token;
+dep result;
+
 use core::*;

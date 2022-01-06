@@ -11,22 +11,22 @@ const OUTPUT_LENGTH_LOCATION = 48;
 // Output types: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#output
 const OUTPUT_VARIABLE_TYPE = 4;
 
-/// Mint `n` coins of the current contract's token_id.
+/// Mint `n` coins of the current contract's asset_id.
 pub fn mint(n: u64) {
     asm(r1: n) {
         mint r1;
     }
 }
 
-/// Burn `n` coins of the current contract's token_id.
+/// Burn `n` coins of the current contract's asset_id.
 pub fn burn(n: u64) {
     asm(r1: n) {
         burn r1;
     }
 }
 
-/// Transfer amount `coins` of type `token_id` to address `recipient`.
-pub fn transfer_to_output(coins: u64, token_id: b256, recipient: Address) {
+/// Transfer amount `coins` of type `asset_id` to address `recipient`.
+pub fn transfer_to_output(coins: u64, asset_id: b256, recipient: Address) {
     // get length of outputs from TransactionScript outputsCount:
     let length: u8 = asm(outputs_length, outputs_length_ptr: OUTPUT_LENGTH_LOCATION) {
         lw outputs_length outputs_length_ptr i0;
@@ -76,8 +76,8 @@ pub fn transfer_to_output(coins: u64, token_id: b256, recipient: Address) {
 /// This will allow the transfer of coins even if there is no way to retrieve them !!!
 /// Use of this function can lead to irretrievable loss of coins if not used with caution.
 // @todo use type `ContractId` if implemented.
-pub fn force_transfer(coins: u64, token_id: b256, contract_id: b256) {
-    asm(coins, token_id, contract_id) {
-        tr contract_id coins token_id;
+pub fn force_transfer(coins: u64, asset_id: b256, contract_id: b256) {
+    asm(coins, asset_id, contract_id) {
+        tr contract_id coins asset_id;
     }
 }

@@ -60,7 +60,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
                 // then store the index of the output and record the fact that we found a suitable output.
                 outputIndex = index;
                 output_found = true;
-                // todo: use "break" keyword when it lands.
+                // todo: use "break" keyword when it lands ( tracked here: https://github.com/FuelLabs/sway/issues/587 )
                 index = length; // break early and use the output we found
             } else {
                 // otherwise, increment the index and continue the loop.

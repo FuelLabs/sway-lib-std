@@ -41,35 +41,40 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
     // If an output of type `OutputVariable` is found, check if its `amount` is zero.
     // As one cannot transfer zero coins to an output without a panic, a variable output with a value of zero is by definition unused.
     while index < length {
-        // if an ouput is found of type `OutputVariable`:
-        if asm(slot: index, type, target: OUTPUT_VARIABLE_TYPE, bytes: 8, res) {
+        let target_output_type_exists = asm(slot: index, type, target: OUTPUT_VARIABLE_TYPE, bytes: 8, res) {
             xos type slot;
             meq res type target bytes;
-            res: bool // && the amount is zero:
-        }
-        && asm(slot: index, a, amount_ptr, output, is_zero, bytes: 8) {
-            xos output slot;
-            addi amount_ptr output i64;
-            lw a amount_ptr i0;
-            meq is_zero a zero bytes;
-            is_zero: bool
-        } // then store the index of the output and record the fact that we found a suitable output.
-        {
-            outputIndex = index;
-            output_found = true;
-            return;
-            // otherwise, increment the index and continue the loop.
-        } else {
-            index = index + 1;
+            res: bool
+        };
+        // if an ouput is found of type `OutputVariable`:
+        if target_output_type_exists {
+            let amount_is_zero = asm(slot: index, a, amount_ptr, output, is_zero, bytes: 8) {
+                xos output slot;
+                addi amount_ptr output i64;
+                lw a amount_ptr i0;
+                meq is_zero a zero bytes;
+                is_zero: bool
+            };
+            // && if the amount is zero:
+            if amount_is_zero {
+                // then store the index of the output and record the fact that we found a suitable output.
+                outputIndex = index;
+                output_found = true;
+                // todo: use "break" keyword when it lands.
+                index = length; // break early and use the output we found
+            } else {
+                // otherwise, increment the index and continue the loop.
+                index = index + 1;
+            }
         }
     }
     // If no suitable output was found, revert.
-    if !output_found {
+    if output_found {
+        asm(amnt: amount, id: asset_id.value, recipient, output: index) {
+            tro recipient output amnt id;
+        }
+    } else {
         panic(0)
-    };
-
-    asm(amnt: amount, id: asset_id.value, recipient, output: index) {
-        tro recipient output amnt id;
     }
 }
 

@@ -2,31 +2,32 @@ library token;
 //! Functionality for performing common operations on tokens.
 
 use ::address::Address;
+use ::contract_id::ContractId;
 use ::chain::panic;
 
-// @todo if tx format changes, the magic number "48" must be changed !
-// TransactionScript outputsCount has a 48 byte(6 words * 8) offset
-// Transaction Script: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#transactionscript
+// note: if tx format changes, the magic number "48" must be changed !
+/// TransactionScript outputsCount has a 48 byte(6 words * 8) offset
+/// Transaction Script: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#transactionscript
+/// Output types: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#output
 const OUTPUT_LENGTH_LOCATION = 48;
-// Output types: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#output
 const OUTPUT_VARIABLE_TYPE = 4;
 
-/// Mint `n` coins of the current contract's asset_id.
-pub fn mint(n: u64) {
-    asm(r1: n) {
+/// Mint `amount` coins of the current contract's `asset_id`.
+pub fn mint(amount: u64) {
+    asm(r1: amount) {
         mint r1;
     }
 }
 
-/// Burn `n` coins of the current contract's asset_id.
-pub fn burn(n: u64) {
-    asm(r1: n) {
+/// Burn `amount` coins of the current contract's `asset_id`.
+pub fn burn(amount: u64) {
+    asm(r1: amount) {
         burn r1;
     }
 }
 
-/// Transfer amount `coins` of type `asset_id` to address `recipient`.
-pub fn transfer_to_output(coins: u64, asset_id: b256, recipient: Address) {
+/// Transfer `amount` coins of type `asset_id` to address `recipient`.
+pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address) {
     // get length of outputs from TransactionScript outputsCount:
     let length: u8 = asm(outputs_length, outputs_length_ptr: OUTPUT_LENGTH_LOCATION) {
         lw outputs_length outputs_length_ptr i0;
@@ -37,10 +38,10 @@ pub fn transfer_to_output(coins: u64, asset_id: b256, recipient: Address) {
     let mut outputIndex = 0;
     let mut output_found = false;
 
-    // If an output of type "outputVariable" is found, check if its`amount` is zero.
+    // If an output of type `OutputVariable` is found, check if its `amount` is zero.
     // As one cannot transfer zero coins to an output without a panic, a variable output with a value of zero is by definition unused.
     while index < length {
-        // if an ouput is found of type "OutputVariable":
+        // if an ouput is found of type `OutputVariable`:
         if asm(slot: index, type, target: OUTPUT_VARIABLE_TYPE, bytes: 8, res) {
             xos type slot;
             meq res type target bytes;
@@ -52,12 +53,12 @@ pub fn transfer_to_output(coins: u64, asset_id: b256, recipient: Address) {
             lw a amount_ptr i0;
             meq is_zero a zero bytes;
             is_zero: bool
-        } // then store the index of the output and record the fact that we found a suitable output
+        } // then store the index of the output and record the fact that we found a suitable output.
         {
             outputIndex = index;
             output_found = true;
             return;
-            // otherwise, increment the index and continue the loop
+            // otherwise, increment the index and continue the loop.
         } else {
             index = index + 1;
         }
@@ -67,17 +68,19 @@ pub fn transfer_to_output(coins: u64, asset_id: b256, recipient: Address) {
         panic(0)
     };
 
-    asm(amount: coins, id: asset_id, recipient, output: index) {
-        tro recipient output amount id;
+    asm(amnt: amount, id: asset_id.value, recipient, output: index) {
+        tro recipient output amnt id;
     }
 }
 
-/// !!! UNCONDITIONAL transfer of amount `coins` of type `asset_id` to contract at `contract_id`.
+/// !!! UNCONDITIONAL transfer of `amount` coins of type `asset_id` to contract at `contract_id`.
 /// This will allow the transfer of coins even if there is no way to retrieve them !!!
 /// Use of this function can lead to irretrievable loss of coins if not used with caution.
-// @todo use type `ContractId` if implemented.
-pub fn force_transfer(coins: u64, asset_id: b256, contract_id: b256) {
-    asm(coins, asset_id, contract_id) {
-        tr contract_id coins asset_id;
+pub fn force_transfer(amount: u64, asset_id: ContractId, contract_id: ContractId) {
+    // note: asm block can't handle readingstruct-fields to initialize registers
+    let asset = asset_id.value;
+    let id = contract_id.value;
+    asm(amount, asset, id) {
+        tr id amount asset;
     }
 }

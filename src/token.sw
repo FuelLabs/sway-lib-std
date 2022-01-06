@@ -77,10 +77,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
 /// This will allow the transfer of coins even if there is no way to retrieve them !!!
 /// Use of this function can lead to irretrievable loss of coins if not used with caution.
 pub fn force_transfer(amount: u64, asset_id: ContractId, contract_id: ContractId) {
-    // note: asm block can't handle readingstruct-fields to initialize registers
-    let asset = asset_id.value;
-    let id = contract_id.value;
-    asm(amount, asset, id) {
-        tr id amount asset;
+    asm(r1: amount, r2: asset_id.value, r3: contract_id.value) {
+        tr id r1 r2;
     }
 }

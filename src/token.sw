@@ -34,7 +34,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
         outputs_length: u8
     };
     // maintain a manual index as we only have `while` loops in sway atm:
-    let mut index: u8 = 0;
+    let mut index: u8 = 0u8;
     let mut outputIndex = 0;
     let mut output_found = false;
 

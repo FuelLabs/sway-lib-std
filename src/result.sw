@@ -28,6 +28,11 @@ impl Result<T, E> {
 
     /// Returns `true` if the result is [`Ok`].
     fn is_ok(self) -> bool {
+        // TODO the following should compile instead
+        // match self {
+        //     Ok(_) => true,
+        //     _ => false,
+        // }
         match self {
             Result::Ok(T) => { true },
             _ => { false },
@@ -36,6 +41,11 @@ impl Result<T, E> {
 
     /// Returns `true` if the result is [`Err`].
     fn is_err(self) -> bool {
-        !self.is_ok()
+        // TODO the following should compile instead
+        // !self.is_ok()
+        match self {
+            Result::Ok(T) => { false },
+            _ => { true },
+        }
     }
 }

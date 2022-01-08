@@ -29,8 +29,8 @@ impl Result<T, E> {
     /// Returns `true` if the result is [`Ok`].
     fn is_ok(self) -> bool {
         match self {
-            Result::Ok => true,
-            _ => false,
+            Result::Ok(T) => { true },
+            _ => { false },
         }
     }
 

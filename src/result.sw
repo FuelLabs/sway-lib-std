@@ -30,7 +30,7 @@ impl Result<T, E> {
     fn is_ok(self) -> bool {
         match self {
             Result::Ok => true,
-            _, _ => false,
+            Result::Err => false,
         }
     }
 

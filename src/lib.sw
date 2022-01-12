@@ -6,6 +6,7 @@ dep constants;
 dep b512;
 dep chain;
 dep contract_id;
+dep asset_id;
 dep context;
 dep address;
 dep block;

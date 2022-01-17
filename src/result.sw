@@ -34,8 +34,12 @@ impl Result<T, E> {
         //     _ => false,
         // }
         match self {
-            Result::Ok(T) => { true },
-            _ => { false },
+            Result::Ok(T) => {
+                true
+            },
+            _ => {
+                false
+            },
         }
     }
 
@@ -44,8 +48,12 @@ impl Result<T, E> {
         // TODO the following should compile instead
         // !self.is_ok()
         match self {
-            Result::Ok(T) => { false },
-            _ => { true },
+            Result::Ok(T) => {
+                false
+            },
+            _ => {
+                true
+            },
         }
     }
 }

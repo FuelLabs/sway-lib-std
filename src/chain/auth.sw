@@ -49,6 +49,16 @@ impl Ord for Caller {
     }
 }
 
+// temp
+
+// I propose a standard library module to perform authentication in three ways:
+
+//     1.)Contract caller. This is as simple as checking that the parent context is not external, then fetching the parent context's contract ID.
+
+//     2.)Signature. Check that the parent context is external, then perform signature verification on (nonce, selector, args...), where nonce is the nonce of the user signing the action. This nonce is stored in the contract's storage, as opposed to Ethereum where nonces are associated with accounts globally.
+
+//     3.)All-the-same. Check that the parent context is external, then check that all non-contract inputs are all owned by the same address (which could be a predicate hash or a pubkey hash). If so, then consider that address as the caller. This is a heuristic that does not work in all cases, so should be a feature users can optionally use.
+
 // use only if needed
 // pub fn context_is_external() -> bool {
 //     asm(rslt) {
@@ -58,19 +68,32 @@ impl Ord for Caller {
 // }
 
 /// Returns `true` if the caller is external.
-pub fn caller_is_external() -> bool {
+pub fn is_caller_external() -> bool {
     asm(r1) {
         gm r1 i1;
         r1: bool
     }
 }
 
-pub fn caller() -> Caller {
-    Caller::Some(asm(r1) {
-        gmr1i2;
-        r1: b256
-    })
+pub fn get_caller() -> Caller {
+    // if parent is not external
+    if !caller_is_external() {
+        // get the caller
+        Caller::Some(asm(r1) {
+            gm r1 i2;
+            r1: b256
+        })
+    } else {
+        Caller::None
+    }
 }
+
+// pub fn caller() -> Caller {
+//     Caller::Some(asm(r1) {
+//         gmr1i2;
+//         r1: b256
+//     })
+// }
 
 // @note there's currently nothing to stop someone from calling this function in a script (I'm not sure that it would make sense to do so though...), where caller_is_external will always panic.
 // Consider using context_is_external() as an aditional check to make this more robust

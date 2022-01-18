@@ -1,8 +1,11 @@
 library auth;
 
+use ::contract_id::ContractId;
+
+
 // this can be a generic option when options land
 pub enum Caller {
-    Some: b256,
+    Some: ContractId,
     None: (),
 }
 
@@ -67,7 +70,7 @@ impl Ord for Caller {
 //     }
 // }
 
-/// Returns `true` if the caller is external.
+/// Returns `true` if the caller is external (ie: a script or predicate).
 pub fn is_caller_external() -> bool {
     asm(r1) {
         gm r1 i1;
@@ -76,13 +79,12 @@ pub fn is_caller_external() -> bool {
 }
 
 pub fn get_caller() -> Caller {
-    // if parent is not external
-    if !caller_is_external() {
+    if !is_caller_external() {
         // get the caller
-        Caller::Some(asm(r1) {
+        Caller::Some(~ContractId::from(asm(r1) {
             gm r1 i2;
             r1: b256
-        })
+        }))
     } else {
         Caller::None
     }
@@ -99,16 +101,16 @@ pub fn get_caller() -> Caller {
 // Consider using context_is_external() as an aditional check to make this more robust
 pub fn msg_sender() -> Caller {
     // called by scripts or predicates
-    if caller_is_external() {
+    if is_caller_external() {
         get_coin_owner() // calls from other contracts or addresses
     } else {
-        caller()
+        get_caller()
     }
 }
 
 // temp
 fn get_coin_owner() -> Caller {
-    Caller::Some(0x0000000000000000000000000000000000000000000000000000000000000000)
+    Caller::Some(~ContractId::from(0x0000000000000000000000000000000000000000000000000000000000000000))
 }
 
 // fn get_coin_owner() -> b256 {

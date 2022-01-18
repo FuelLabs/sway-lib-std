@@ -1,5 +1,4 @@
 library auth;
-use ::ops::*;
 
 // this can be a generic option when options land
 pub enum Caller {

@@ -2,8 +2,30 @@ library auth;
 
 // this can be a generic option when options land
 pub enum Caller {
-  Some: b256,
-  None: (),
+    Some: b256,
+    None: (),
+}
+
+// temp! delete and use core::ops when possible.
+pub trait Ord {
+    fn gt(self, other: Self) -> bool;
+    fn lt(self, other: Self) -> bool;
+    fn eq(self, other: Self) -> bool;
+} {
+    fn le(self, other: Self) -> bool {
+        self.lt(other) || self.eq(other)
+    }
+    fn ge(self, other: Self) -> bool {
+        self.gt(other) || self.eq(other)
+    }
+    fn neq(self, other: Self) -> bool {
+        // TODO unary operator negation
+        if self.eq(other) {
+            false
+        } else {
+            true
+        }
+    }
 }
 
 impl Ord for Caller {
@@ -37,16 +59,16 @@ impl Ord for Caller {
 
 /// Returns `true` if the caller is external.
 pub fn caller_is_external() -> bool {
-  asm(r1) {
-    gm r1 i1;
-    r1: bool
-  }
+    asm(r1) {
+        gm r1 i1;
+        r1: bool
+    }
 }
 
 pub fn caller() -> Caller {
     Caller::Some(asm(r1) {
-      gm r1 i2;
-      r1: b256
+        gmr1i2;
+        r1: b256
     })
 }
 
@@ -55,8 +77,7 @@ pub fn caller() -> Caller {
 pub fn msg_sender() -> Caller {
     // called by scripts or predicates
     if caller_is_external() {
-        get_coin_owner()
-    // calls from other contracts or addresses
+        get_coin_owner() // calls from other contracts or addresses
     } else {
         caller()
     }
@@ -89,25 +110,4 @@ fn get_coin_owner() -> Caller {
 //         i ++;
 //     }
 //     Caller::Some(owner_candidate)
-// }
-
-
-// TODO some safety checks on the input data? We are going to assume it is the right type for now.
-// TODO make this generic
-// @todo extract this into its own lib?
-
-// pub fn get_script_data() -> u64 {
-//     asm(script_data_len, to_return, script_data_ptr, script_len, script_len_ptr: 376, script_data_len_ptr: 384) {
-//         lw script_len script_len_ptr;
-//         lw script_data_len script_data_len_ptr;
-//         // get the start of the script data
-//         // script_len + script_start
-//         add script_data_ptr script_len is;
-//         // allocate memory to copy script data into
-//         mv to_return sp;
-//         cfe script_data_len;
-//         // copy script data into above buffer
-//         mcp to_return script_data_ptr script_data_len;
-//         to_return: u64 // should be T when generic
-//     }
 // }

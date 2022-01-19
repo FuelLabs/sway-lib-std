@@ -1,6 +1,7 @@
 library auth;
 
 use ::contract_id::ContractId;
+use ::address::Address;
 
 
 // this can be a generic option when options land
@@ -62,6 +63,14 @@ impl Ord for Caller {
 
 //     3.)All-the-same. Check that the parent context is external, then check that all non-contract inputs are all owned by the same address (which could be a predicate hash or a pubkey hash). If so, then consider that address as the caller. This is a heuristic that does not work in all cases, so should be a feature users can optionally use.
 
+// NOTES
+// current mental model:
+// expose a msg_sender() func
+// branch based on context
+// if internal, use get_caller (wrapper for `gm r1 i2`)
+// if external:
+//   use get_coin_owner (should be a feature users can optionally use) || perform signature verification on (nonce, selector, args...)
+
 // use only if needed
 // pub fn context_is_external() -> bool {
 //     asm(rslt) {
@@ -78,6 +87,8 @@ pub fn is_caller_external() -> bool {
     }
 }
 
+// TODO: refactor to use `Option` as a return type when it lands.
+/// Get the current Caller, which is a `ContractId` for an internal context, or the `None` variant for an extenal context (a call).
 pub fn get_caller() -> Caller {
     if !is_caller_external() {
         // get the caller
@@ -90,49 +101,34 @@ pub fn get_caller() -> Caller {
     }
 }
 
-// pub fn caller() -> Caller {
-//     Caller::Some(asm(r1) {
-//         gmr1i2;
-//         r1: b256
-//     })
-// }
-
-// @note there's currently nothing to stop someone from calling this function in a script (I'm not sure that it would make sense to do so though...), where caller_is_external will always panic.
-// Consider using context_is_external() as an aditional check to make this more robust
 pub fn msg_sender() -> Caller {
-    // called by scripts or predicates
     if is_caller_external() {
-        get_coin_owner() // calls from other contracts or addresses
+        get_coin_owner() // or perform signature verification
     } else {
         get_caller()
     }
 }
 
-// temp
-fn get_coin_owner() -> Caller {
-    Caller::Some(~ContractId::from(0x0000000000000000000000000000000000000000000000000000000000000000))
+fn get_coins_owner() -> Address {
+    let inputs: Input[] = ?;
+    let owner_candidate: b256 = 0;
+    let  mut i = 0;
+    let mut input: Input;
+    // let len =
+    while i < inputs.length {
+        input = inputs[i];
+        if input.type = Coin {
+            if candidate = zero {
+                candidate = coin.owner;
+            } else {
+                if coin.owner == candidate {
+                    continue;
+                } else {
+                    return Caller::None
+               }
+            }
+        }
+        i ++;
+    }
+    Caller::Some(owner_candidate)
 }
-
-// fn get_coin_owner() -> b256 {
-//     let inputs: Input[] = ?;
-//     let owner_candidate: b256 = 0;
-//     let  mut i = 0;
-//     let mut input: Input;
-//     // let len =
-//     while i < inputs.length {
-//         input = inputs[i];
-//         if input.type = Coin {
-//             if candidate = zero {
-//                 candidate = coin.owner;
-//             } else {
-//                 if coin.owner == candidate {
-//                     continue;
-//                 } else {
-//                     return Caller::None
-//                }
-//             }
-//         }
-//         i ++;
-//     }
-//     Caller::Some(owner_candidate)
-// }

@@ -27,7 +27,7 @@ impl core::ops::Ord for Address {
     }
 }
 
-// @todo make this generic when possible
+// TODO make this generic when possible.
 pub trait From {
     fn from(b: b256) -> Self;
 } {

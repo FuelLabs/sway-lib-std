@@ -8,3 +8,9 @@ pub fn mint(amount: u64) {
     }
 }
 
+/// Burn `amount` coins of the current contract's `asset_id`.
+pub fn burn(amount: u64) {
+    asm(r1: amount) {
+        burn r1;
+    }
+}

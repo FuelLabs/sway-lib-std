@@ -83,9 +83,9 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
     if !output_found {
         // If no suitable output was found, revert.
         panic(0);
-    };
-
-    asm(amnt: amount, id: asset_id.value, recipient: recipient.value, output: index) {
-        tro recipient output amnt id;
+    } else {
+        asm(amnt: amount, id: asset_id.value, recipient: recipient.value, output: index) {
+            tro recipient output amnt id;
+        }
     }
 }

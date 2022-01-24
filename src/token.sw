@@ -1,6 +1,8 @@
 library token;
 //! Functionality for performing common operations on tokens.
 
+use ::contract_id::ContractId;
+
 /// Mint `amount` coins of the current contract's `asset_id`.
 pub fn mint(amount: u64) {
     asm(r1: amount) {

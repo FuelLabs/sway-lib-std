@@ -74,10 +74,10 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
             } else {
                 // otherwise, increment the index and continue the loop.
                 index = index + 1;
-            }
+            };
         } else {
-                index = length; // break early as there are no suitable outputs.
-            }
+            index = length; // break early as there are no suitable outputs.
+        };
     }
 
     if !output_found {
@@ -86,6 +86,6 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
     } else {
         asm(amnt: amount, id: asset_id.value, recipient: recipient.value, output: index) {
             tro recipient output amnt id;
-        }
-    }
+        };
+    };
 }

@@ -76,7 +76,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
                 index = index + 1;
             }
         } else {
-                index = length; // break early
+                index = length; // break early as there are no suitable outputs.
             }
     }
 

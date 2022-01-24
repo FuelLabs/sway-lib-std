@@ -75,7 +75,9 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
                 // otherwise, increment the index and continue the loop.
                 index = index + 1;
             }
-        }
+        } else {
+                index = length; // break early
+            }
     }
 
     if !output_found {

@@ -2,6 +2,8 @@ library token;
 //! Functionality for performing common operations on tokens.
 
 use ::contract_id::ContractId;
+use ::address::Address;
+use ::chain::panic;
 
 /// Mint `amount` coins of the current contract's `asset_id`.
 pub fn mint(amount: u64) {
@@ -30,13 +32,13 @@ pub fn force_transfer(amount: u64, asset_id: ContractId, contract_id: ContractId
 /// TransactionScript outputsCount has a 48 byte(6 words * 8 bytes) offset
 /// Transaction Script: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#transactionscript
 /// Output types: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#output
-const OUTPUT_LENGTH_LOCATION = 48;
-const OUTPUT_VARIABLE_TYPE = 4;
+// const OUTPUT_LENGTH_LOCATION = 48;
+// const OUTPUT_VARIABLE_TYPE = 4;
 
 /// Transfer `amount` coins of type `asset_id` to address `recipient`.
 pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address) {
     // get length of outputs from TransactionScript outputsCount:
-    let length: u8 = asm(outputs_length, outputs_length_ptr: OUTPUT_LENGTH_LOCATION) {
+    let length: u8 = asm(outputs_length, outputs_length_ptr: 48) {
         lw outputs_length outputs_length_ptr i0;
         outputs_length: u8
     };
@@ -48,7 +50,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
     // If an output of type `OutputVariable` is found, check if its `amount` is zero.
     // As one cannot transfer zero coins to an output without a panic, a variable output with a value of zero is by definition unused.
     while index < length {
-        let target_output_type_exists = asm(slot: index, type, target: OUTPUT_VARIABLE_TYPE, bytes: 8, res) {
+        let target_output_type_exists = asm(slot: index, type, target: 4, bytes: 8, res) {
             xos type slot;
             meq res type target bytes;
             res: bool

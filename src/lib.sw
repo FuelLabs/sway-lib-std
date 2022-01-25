@@ -6,6 +6,8 @@ dep constants;
 dep b512;
 dep contract_id;
 dep address;
+dep token;
+dep result;
 dep ecr;
 dep result;
 dep chain;

@@ -16,7 +16,6 @@ impl core::ops::Eq for Address {
     }
 }
 
-// TODO make this generic when possible.
 pub trait From {
     fn from(b: b256) -> Self;
 } {

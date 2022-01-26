@@ -6,4 +6,4 @@ name = "lib-std"
 
 
 [dependencies]
-"core" = { git = "http://github.com/FuelLabs/sway-lib-core" }
+"core" = { git = "http://github.com/FuelLabs/sway-lib-core", version =" " }

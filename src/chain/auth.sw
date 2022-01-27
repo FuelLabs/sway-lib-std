@@ -1,4 +1,5 @@
 library auth;
+//! Functionality for determining who is calling an ABI method
 
 // this can be a generic option when options land
 enum Caller {

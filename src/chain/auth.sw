@@ -1,13 +1,20 @@
 library auth;
 //! Functionality for determining who is calling an ABI method
 
-// this can be a generic option when options land
-enum Caller {
-    Some: b256,
-    None: (),
+use ::result::Result;
+use ::address::Address;
+use ::contract_id::ContractId;
+
+pub enum AuthError {
+    ContextError: (),
 }
 
-/// Returns `true` if the caller is external.
+pub enum Sender {
+    Address: Address,
+    Id: ContractId,
+}
+
+/// Returns `true` if the caller is external (ie: a script or predicate).
 pub fn caller_is_external() -> bool {
     asm(r1) {
         gm r1 i1;
@@ -15,15 +22,18 @@ pub fn caller_is_external() -> bool {
     }
 }
 
-pub fn caller() -> Caller {
-    // if parent is not external
+/// Returns a Result::Ok(Address) or Result::Error.
+// NOTE: Currently only retuns an address if the parent context is internal.
+pub fn msg_sender() -> Result<Sender, AuthError> {
     if !caller_is_external() {
-        // get the caller
-        Caller::Some(asm(r1) {
-            gmr1i2;
+        // Get caller's contract ID
+        let id = ~ContractId::from(asm(r1) {
+            gm r1 i2;
             r1: b256
-        })
+        });
+        Result::Ok(Sender::Id(id))
     } else {
-        Caller::None
+        // TODO: Add call to get_coins_owner() here when its implemented,
+        Result::Err(AuthError::ContextError)
     }
 }

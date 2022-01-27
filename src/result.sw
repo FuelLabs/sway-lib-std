@@ -9,7 +9,7 @@ library result;
 
 /// `Result` is a type that represents either success ([`Ok`]) or failure
 /// ([`Err`]).
-enum Result<T, E> {
+pub enum Result<T, E> {
     /// Contains the success value
     Ok: T,
 

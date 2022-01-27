@@ -7,10 +7,10 @@ dep constants;
 dep b512;
 dep address;
 dep contract_id;
+dep ecr;
 dep chain;
 dep context;
 dep block;
 dep token;
-dep ecr;
 
 use core::*;

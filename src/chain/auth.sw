@@ -23,7 +23,7 @@ pub fn caller_is_external() -> bool {
 }
 
 /// Returns a Result::Ok(Address) or Result::Error.
-// NOTE: Currently only retuns an address if the parent context is internal.
+// NOTE: Currently only returns the Ok variant of result if the parent context is Internal.
 pub fn msg_sender() -> Result<Sender, AuthError> {
     if !caller_is_external() {
         // Get caller's contract ID

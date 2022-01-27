@@ -3,14 +3,16 @@ library auth;
 
 use ::result::Result;
 use ::address::Address;
+use ::ecr::ec_recover_address;
 use ::contract_id::ContractId;
 
 pub enum AuthError {
     ContextError: (),
+    EcRecoverError: (),
 }
 
 pub enum Sender {
-    Address: Address,
+    Addr: Address,
     Id: ContractId,
 }
 
@@ -35,5 +37,14 @@ pub fn msg_sender() -> Result<Sender, AuthError> {
     } else {
         // TODO: Add call to get_coins_owner() here when its implemented,
         Result::Err(AuthError::ContextError)
+    }
+}
+
+/// A wrapper for ec-recover_address which is aware of the parent context and returns the appropriate result accordingly.
+pub fn get_signer(signature: B512, msg_hash: b256) -> Result<Address, AuthError> {
+   if !caller_is_external() {
+        Result::Err(AuthError::EcRecoverError)
+    } else {
+        Result::Ok(ec_recover_address(signature, msg_hash))
     }
 }

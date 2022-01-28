@@ -40,7 +40,7 @@ impl Option<T> {
     /// Returns `true` if the result is [`None`].
     fn is_none(self) -> bool {
         match self {
-            Option::Some() => {
+            Option::Some(T) => {
                 false
             },
             _ => {

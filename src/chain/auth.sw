@@ -45,6 +45,8 @@ pub fn get_signer(signature: B512, msg_hash: b256) -> Result<Address, AuthError>
    if !caller_is_external() {
         Result::Err(AuthError::EcRecoverError)
     } else {
-        Result::Ok(ec_recover_address(signature, msg_hash))
+        let addr = ec_recover_address(signature, msg_hash);
+        // TODO: refactor ec_recover functions to return Result
+        Result::Ok(addr)
     }
 }

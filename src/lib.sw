@@ -9,6 +9,8 @@ dep address;
 dep contract_id;
 dep chain;
 dep context;
+dep address;
+dep option;
 dep block;
 dep token;
 dep ecr;

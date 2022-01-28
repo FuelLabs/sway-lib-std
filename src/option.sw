@@ -1,9 +1,8 @@
 //! Error handling with the `Option` type.
 //!
-//! [`Option<T>`][`Option`] is the type used for returning and propagating
-//! errors. It is an enum with the variants, [`Some(T)`], representing
-//! the existence of a value, and [`None()`], representing
-//! the absence of a value.
+//! [`Option<T>`][`Option`] is the type used for representing the existence or absence of a value. It is an enum with the variants, [`Some(T)`], representing
+//! some value, and [`None()`], representing
+//! no value.
 
 library option;
 

@@ -4,7 +4,8 @@ library b512;
 /// Stores two b256s in contiguous memory.
 /// Guaranteed to be contiguous for use with ec-recover: std::ecr::ec_recover().
 pub struct B512 {
-    bytes: [b256; 2],
+    bytes: [b256;
+    2],
 }
 
 // @todo use generic form when possible
@@ -19,7 +20,8 @@ pub trait From {
 impl From for B512 {
     fn from(h: b256, l: b256) -> B512 {
         B512 {
-            bytes: [h, l],
+            bytes: [h,
+            l], 
         }
     }
 }
@@ -30,7 +32,7 @@ impl B512 {
     fn new() -> B512 {
         B512 {
             bytes: [0x0000000000000000000000000000000000000000000000000000000000000000,
-                    0x0000000000000000000000000000000000000000000000000000000000000000],
+            0x0000000000000000000000000000000000000000000000000000000000000000], 
         }
     }
 }

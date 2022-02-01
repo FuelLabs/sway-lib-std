@@ -30,8 +30,8 @@ pub fn force_transfer(amount: u64, asset_id: ContractId, contract_id: ContractId
 
 /// Transfer `amount` coins of type `asset_id` to address `recipient`.
 pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address) {
-    // note: if tx format changes, the magic number "48" must be changed !
-    // TransactionScript outputsCount has a 48 byte(6 words * 8 bytes) offset
+    // note: if tx format changes, the magic number "56" must be changed !
+    // TransactionScript outputsCount has a 56 byte(7 words * 8 bytes) offset
     // Transaction Script: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#transactionscript
     // Output types: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#output
     const OUTPUT_LENGTH_LOCATION = 56;

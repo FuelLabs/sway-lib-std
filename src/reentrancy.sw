@@ -1,4 +1,4 @@
-library reentrant;
+library reentrancy;
 
 use ::context::contract_id;
 use ::auth::caller_is_external;

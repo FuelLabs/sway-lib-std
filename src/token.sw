@@ -39,7 +39,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
 
     // get length of outputs from TransactionScript outputsCount:
     let length: u8 = asm(outputs_length, outputs_length_ptr: OUTPUT_LENGTH_LOCATION) {
-        lw outputs_length outputs_length_ptr i0;
+        lb outputs_length outputs_length_ptr i0;
         outputs_length: u8
     };
     // maintain a manual index as we only have `while` loops in sway atm:
@@ -50,20 +50,22 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
     // If an output of type `OutputVariable` is found, check if its `amount` is zero.
     // As one cannot transfer zero coins to an output without a panic, a variable output with a value of zero is by definition unused.
     while index < length {
-        let target_output_type_exists = asm(slot: index, type, target: OUTPUT_VARIABLE_TYPE, bytes: 8, res) {
-            xos type slot;
-            meq res type target bytes;
-            res: bool
+        let type = asm(n: index, offset, t) {
+            xos offset n; // get the offset to the nth output
+            lb t offset i0; // load the type of the output at 'offset' into t
+            t: u8
         };
+        let target_output_type_exists = type == OUTPUT_VARIABLE_TYPE;
+
         // if an ouput is found of type `OutputVariable`:
         if target_output_type_exists {
-            let amount_is_zero = asm(slot: index, a, amount_ptr, output, is_zero, bytes: 8) {
+            let amount = asm(slot: index, a, amount_ptr, output, is_zero, bytes: 8) {
                 xos output slot;
-                addi amount_ptr output i64;
+                addi amount_ptr output i32;
                 lw a amount_ptr i0;
-                meq is_zero a zero bytes;
-                is_zero: bool
+                a: u64
             };
+            let amount_is_zero = amount == 0;
             // && if the amount is zero:
             if amount_is_zero {
                 // then store the index of the output and record the fact that we found a suitable output.

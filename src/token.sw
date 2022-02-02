@@ -53,7 +53,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
         let output_start = asm(n: index, offset) {
             xos offset n; // get the offset to the nth output
             offset: u64
-        }
+        };
 
         let type = asm(offset: output_start, t) {
             lb t offset i0; // load the type of the output at 'offset' into t

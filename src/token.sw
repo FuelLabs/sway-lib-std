@@ -63,9 +63,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
         // if an ouput is found of type `OutputVariable`:
         if type == OUTPUT_VARIABLE_TYPE {
             let amount = asm(n: index, a, amount_ptr, output: output_start) {
-                // TODO: fix offset here to be 16 or 40 depending on feedback:
-                // https://github.com/FuelLabs/sway-lib-std/pull/32#issuecomment-1028159987
-                addi amount_ptr output i32;
+                addi amount_ptr output i40;
                 lw a amount_ptr i0;
                 a: u64
             };

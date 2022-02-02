@@ -50,16 +50,21 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
     // If an output of type `OutputVariable` is found, check if its `amount` is zero.
     // As one cannot transfer zero coins to an output without a panic, a variable output with a value of zero is by definition unused.
     while index < length {
-        let type = asm(n: index, offset, t) {
+        let output_start = asm(n: index, offset) {
             xos offset n; // get the offset to the nth output
+            offset: u64
+        }
+
+        let type = asm(offset: output_start, t) {
             lb t offset i0; // load the type of the output at 'offset' into t
             t: u8
         };
 
         // if an ouput is found of type `OutputVariable`:
         if type == OUTPUT_VARIABLE_TYPE {
-            let amount = asm(slot: index, a, amount_ptr, output, is_zero, bytes: 8) {
-                xos output slot;
+            let amount = asm(n: index, a, amount_ptr, output: output_start) {
+                // TODO: fix offset here to be 16 or 40 depending on feedback:
+                // https://github.com/FuelLabs/sway-lib-std/pull/32#issuecomment-1028159987
                 addi amount_ptr output i32;
                 lw a amount_ptr i0;
                 a: u64

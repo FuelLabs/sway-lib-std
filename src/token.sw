@@ -55,19 +55,18 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
             lb t offset i0; // load the type of the output at 'offset' into t
             t: u8
         };
-        let target_output_type_exists = type == OUTPUT_VARIABLE_TYPE;
 
         // if an ouput is found of type `OutputVariable`:
-        if target_output_type_exists {
+        if type == OUTPUT_VARIABLE_TYPE {
             let amount = asm(slot: index, a, amount_ptr, output, is_zero, bytes: 8) {
                 xos output slot;
                 addi amount_ptr output i32;
                 lw a amount_ptr i0;
                 a: u64
             };
-            let amount_is_zero = amount == 0;
+
             // && if the amount is zero:
-            if amount_is_zero {
+            if amount == 0 {
                 // then store the index of the output and record the fact that we found a suitable output.
                 outputIndex = index;
                 output_found = true;

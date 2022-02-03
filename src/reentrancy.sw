@@ -1,10 +1,13 @@
+//! A reentrancy guard for use in Sway contracts.
+//! Note that this only works in internal contexts.
+
 library reentrancy;
 
 use ::context::contract_id;
 use ::auth::caller_is_external;
 use ::option::*;
 
-
+/// Returns `true` if the reentrancy pattern is detected, and `false` otherwise.
 pub fn is_reentrant() -> bool {
     let mut reentrancy = false;
     let mut internal = !caller_is_external();

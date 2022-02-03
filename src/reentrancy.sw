@@ -4,19 +4,41 @@ use ::context::contract_id;
 use ::auth::caller_is_external;
 // You can use the saved $fp of the previous call frame to tell you where the previous call frame begins. The saved $fp is at a fixed offset from the start of each call frame.
 
+/*
+While the context == internal:
+  get current call frame with $fp
+  get saved registers from previous context ($fp + 64)
+  get the saved ContractId (48-byte offset from start of saved registers)
+    if this is the first iteration:
+      save the ContractID
+    else:
+      compare to saved ContractId
+      if Id == savedId
+        reentrancy = true
+      else
+        continue
+
+*/
+
 
 pub fn is_reentrant() -> bool {
     let mut reentrancy = false;
     let mut internal = !caller_is_external();
-    let current_call_frame_ptr = asm() {
-        fp: u32
-    }
-    let previous_frame_ptr = get_parent_call_frame();
-    // get the ContractId of the caller
-    let initial_caller_id = get_caller_id(previous_frame_ptr);
+
+    // let current_call_frame_ptr = asm() {
+    //     fp: u32
+    // }
+
+    // let previous_frame_ptr = get_parent_call_frame();
+
+    // get the ContractId of the previous caller
+    // let initial_caller_id = get_caller_id(previous_frame_ptr);
 
     while internal {
-        let parent_contract_id = get_parent_id();
+        let current_call_frame_ptr = get_frame_pointer()
+        let previous_call_frame_ptr = get_previous_call_frame(current_call_frame_ptr)
+        let parent_contract_id = get_parent_id(previous_call_frame_ptr);
+
         if parent_contract_id == initial_caller_id {
             reentrancy = true;
             internal = false;
@@ -31,11 +53,19 @@ pub fn is_reentrant() -> bool {
 const CALL_FRAME_OFFSET = 48;     // 6 words * 8 bytes
 const SAVED_REGISTERS_OFFSET = 16; // 2 words * 8 bytes
 
-fn get_parent_call_frame() {
-
+// if 'offset' is 0, this will get current frame. for the previous frame, 'offset' should be:
+// 8*4(to) + 8*4(asset_id) = 64 (to get saved registers.)
+// then, from start of saved registers, 8*6 words = 48
+fn get_frame_pointer() -> u64 {
+    fp: u64
 }
 
-fn get_caller_id(ptr: u32) -> ContractId {
+fn get_saved_registers_location(location, offset: SAVED_REGISTERS_OFFSET) -> u64 {
+    add location fp offset;
+    location: u64
+}
+
+fn get_previous_caller_id(ptr: u64) -> ContractId {
     asm(id, offset: SAVED_REGISTERS_OFFSET) {
         add id fp offset;
         id: ContractId

@@ -51,7 +51,7 @@ fn get_saved_regs_pointer(frame_ptr: u64) -> u64 {
 
 fn get_previous_caller_id(saved_regs_ptr: u64) -> ContractId {
     asm(res, offset: CALL_FRAME_OFFSET) {
-        add id fp offset;
+        add res fp offset;
         res: ContractId
     }
 }

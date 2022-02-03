@@ -4,29 +4,6 @@ use ::context::contract_id;
 use ::auth::caller_is_external;
 use ::option::*;
 
-/*
-// LOOP:
-- get the current context.
-- assign a variable to keep track of the call frame pointer (initially starts at $fp).
-- def a variable to store the first calling ContractId for comparison.
-
-- While the context == internal:
-  - get the previous caller's ContractId: get_previous_caller_id().
-  - if this is the first iteration:
-      - save the ContractID.
-  - else:
-      - compare to saved ContractId.
-      - if Id == savedId:
-        - reentrancy = true.
-      - else:
-        - continue.
-
-// get_previous_caller_id():
-- get saved registers (value: 'regs') from previous context ($fp + 64)
-- get the saved ContractId (48-byte offset from start of saved registers)
-- return the ContractId
-*/
-
 
 pub fn is_reentrant() -> bool {
     let mut reentrancy = false;

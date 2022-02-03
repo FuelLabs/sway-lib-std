@@ -22,18 +22,18 @@ pub fn is_reentrant() -> bool {
     while internal {
         let saved_registers_pointer = get_saved_regs_pointer(call_frame_pointer);
         let temp_caller_id = get_previous_caller_id(saved_registers_pointer)
-        // consider reversing these to check Option::Some first (for every iteration after the first caller_id will be an Option::Some() value).
-        if caller_id == Option::None {
-            caller_id = Option::Some(temp_caller_id);
-        } else {
-            if Option::Some(temp_caller_id) == caller_id {
+        match caller_id {
+          Option::Some => {
+              if Option::Some(temp_caller_id) == caller_id {
                 reentrancy = true;
                 internal = false;
             } else {
                 internal = !caller_is_external();
                 call_frame_pointer = saved_registers_pointer + 48;
             };
-        };
+          },
+          _ => {caller_id = Option::Some(temp_caller_id);}
+        }
     }
     reentrancy
 }

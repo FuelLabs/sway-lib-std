@@ -22,8 +22,9 @@ pub fn is_reentrant() -> bool {
     while internal {
         let saved_registers_pointer = get_saved_regs_pointer(call_frame_pointer);
         let temp_caller_id = get_previous_caller_id(saved_registers_pointer)
+        // cleanup match syntax when match for enums lands
         match caller_id {
-          Option::Some => {
+          Option::Some(_) => {
               if Option::Some(temp_caller_id) == caller_id {
                 reentrancy = true;
                 internal = false;

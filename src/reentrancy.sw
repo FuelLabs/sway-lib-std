@@ -17,24 +17,19 @@ pub fn is_reentrant() -> bool {
         fp: u64
     }
 
-    let mut caller_id = Option::None();
+    // Get our current contract ID
+    let current_id = contract_id();
 
     while internal {
         let saved_registers_pointer = get_saved_regs_pointer(call_frame_pointer);
-        let temp_caller_id = get_previous_caller_id(saved_registers_pointer)
-        // cleanup match syntax when match for enums lands
-        match caller_id {
-          Option::Some(_) => {
-              if Option::Some(temp_caller_id) == caller_id {
-                reentrancy = true;
-                internal = false;
-            } else {
-                internal = !caller_is_external();
-                call_frame_pointer = saved_registers_pointer + 48;
-            };
-          },
-          _ => {caller_id = Option::Some(temp_caller_id);}
-        }
+        let temp_id = get_previous_contract_id(saved_registers_pointer)
+        if temp_id == current_id {
+            reentrancy = true;
+            internal = false;
+        } else {
+            internal = !caller_is_external();
+            call_frame_pointer = saved_registers_pointer + 48;
+        };
     }
     reentrancy
 }
@@ -49,7 +44,7 @@ fn get_saved_regs_pointer(frame_ptr: u64) -> u64 {
     }
 }
 
-fn get_previous_caller_id(saved_regs_ptr: u64) -> ContractId {
+fn get_previous_contract_id(saved_regs_ptr: u64) -> ContractId {
     asm(res, offset: CALL_FRAME_OFFSET) {
         add res fp offset;
         res: ContractId

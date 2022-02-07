@@ -15,20 +15,20 @@ pub fn is_reentrant() -> bool {
     // not sure about this yet
     let mut call_frame_pointer = asm() {
         fp: u64
-    }
+    };
 
     // Get our current contract ID
     let current_id = contract_id();
 
     while internal {
         let saved_registers_pointer = get_saved_regs_pointer(call_frame_pointer);
-        let temp_id = get_previous_contract_id(saved_registers_pointer)
+        let temp_id = get_previous_contract_id(saved_registers_pointer);
         if temp_id == current_id {
             reentrancy = true;
             internal = false;
         } else {
             internal = !caller_is_external();
-            call_frame_pointer = saved_registers_pointer + 48;
+            call_frame_pointer = saved_registers_pointer + CALL_FRAME_OFFSET;
         };
     }
     reentrancy

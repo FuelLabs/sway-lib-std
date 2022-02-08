@@ -1,5 +1,7 @@
+//! Functionality for determining who is calling an ABI method.
+//! As transactions in the UTXO model don't have a concept of "sender", a single Authentication mechanism won't work for all use-cases.
+//! This module exposes a variety of mechanisms for Authentication depending on the situation.
 library auth;
-//! Functionality for determining who is calling an ABI method
 
 use ::result::Result;
 use ::b512::B512;
@@ -12,8 +14,7 @@ pub enum AuthError {
     EcRecoverError: (),
 }
 
-// TODO: use an enum instead of loose contants for these once match statements work with enum.
-/// tracked here: https://github.com/FuelLabs/sway/issues/579
+// TODO: use an enum instead of loose contants for these once match statements work with enum. tracked here: https://github.com/FuelLabs/sway/issues/579
 const IS_CALLER_EXTERNAL = 1;
 const GET_CALLER = 2;
 

@@ -2,6 +2,7 @@ library auth;
 //! Functionality for determining who is calling an ABI method
 
 use ::result::Result;
+use ::b512::B512;
 use ::address::Address;
 use ::ecr::ec_recover_address;
 use ::contract_id::ContractId;
@@ -30,9 +31,10 @@ pub fn caller_is_external() -> bool {
 }
 
 /// A wrapper for ec-recover_address which is aware of the parent context and returns the appropriate result accordingly.
+/// Returns Result::Error(ContextError) if the parent context is internal, otherwise returns a Result::Ok(Address) or Result::Error(EcRecoverError)
 pub fn get_signer(signature: B512, msg_hash: b256) -> Result<Address, AuthError> {
    if !caller_is_external() {
-        Result::Err(AuthError::EcRecoverError)
+        Result::Err(AuthError::ContextError)
     } else {
         let addr = ec_recover_address(signature, msg_hash);
         // TODO: refactor ec_recover functions to return Result

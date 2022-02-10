@@ -1,5 +1,5 @@
 script;
 
 fn main() {
-    
+
 }

@@ -8,7 +8,7 @@ use ::auth::caller_is_external;
 use ::option::*;
 
 const SAVED_REGISTERS_OFFSET = 64; // 8 words * 8 bytes
-const CALL_FRAME_OFFSET = 48;      // 6 words * 8 bytes
+const CALL_FRAME_OFFSET = 48; // 6 words * 8 bytes
 
 /// Returns `true` if the reentrancy pattern is detected, and `false` otherwise.
 pub fn is_reentrant() -> bool {
@@ -31,7 +31,6 @@ pub fn is_reentrant() -> bool {
             internal = !caller_is_external();
 
             call_frame_pointer = get_previous_frame_pointer(call_frame_pointer);
-
         };
     }
     reentrancy

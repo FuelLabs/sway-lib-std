@@ -2,6 +2,6 @@ script;
 
 use std::address::Address;
 
-fn main() {
-
+fn main() -> bool {
+    true
 }

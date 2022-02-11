@@ -7,46 +7,56 @@ use ::context::contract_id;
 use ::auth::caller_is_external;
 use ::option::*;
 
+const SAVED_REGISTERS_OFFSET = 64; // 8 words * 8 bytes
+const CALL_FRAME_OFFSET = 48;      // 6 words * 8 bytes
+
 /// Returns `true` if the reentrancy pattern is detected, and `false` otherwise.
 pub fn is_reentrant() -> bool {
     let mut reentrancy = false;
     let mut internal = !caller_is_external();
 
-    // not sure about this yet
-    let mut call_frame_pointer = asm() {
-        fp: u64
-    };
+    let mut call_frame_pointer = get_current_frame_pointer();
 
     // Get our current contract ID
-    let current_id = contract_id();
+    let target_id = contract_id();
 
+    // reentrancy cannot happen in an external context. If we don't detect it by the time we get to an external context in the stack, then the reentrancy pattern is not present
     while internal {
-        let saved_registers_pointer = get_saved_regs_pointer(call_frame_pointer);
-        let temp_id = get_previous_contract_id(saved_registers_pointer);
-        if temp_id == current_id {
+        let previous_id = get_previous_contract_id(call_frame_pointer);
+
+        if previous_id == target_id {
             reentrancy = true;
             internal = false;
         } else {
             internal = !caller_is_external();
-            call_frame_pointer = saved_registers_pointer + CALL_FRAME_OFFSET;
+
+            call_frame_pointer = get_previous_frame_pointer(call_frame_pointer);
+
         };
     }
     reentrancy
 }
 
-const SAVED_REGISTERS_OFFSET = 64; // 8 words * 8 bytes
-const CALL_FRAME_OFFSET = 48;      // 6 words * 8 bytes
+// get a pointer to the current call frame
+fn get_current_frame_pointer() -> u64 {
+    asm() {
+        fp: u64
+    };
+}
 
-fn get_saved_regs_pointer(frame_ptr: u64) -> u64 {
-    asm(res, pointer: frame_ptr, offset: SAVED_REGISTERS_OFFSET) {
-        add res pointer offset;
-        res:  u64
+// get a pointer to the previous (relative to the 'frame_pointer' param) call frame using offsets from a pointer.
+fn get_previous_frame_pointer(frame_pointer: u64) -> u64 {
+    let offset = SAVED_REGISTERS_OFFSET + CALL_FRAME_OFFSET;
+    asm(res, ptr: frame_pointer, offset: offset) {
+        add res ptr offset;
+        res: u64
     }
 }
 
-fn get_previous_contract_id(saved_regs_ptr: u64) -> ContractId {
-    asm(res, offset: CALL_FRAME_OFFSET) {
-        add res fp offset;
-        res: ContractId
-    }
+// get the value of the previous `ContractId` from the previous call frame on the stack
+fn get_previous_contract_id(previous_frame_ptr: u64) -> ContractId {
+    ~ContractId::from(asm(res, ptr: previous_frame_ptr) {
+        mcpi res ptr i32;
+        res: b256
+    })
 }

@@ -19,7 +19,7 @@ pub fn is_reentrant() -> bool {
     // Get our current contract ID
     let target_id = contract_id();
 
-    // reentrancy cannot happen in an external context. If we don't detect it by the time we get to an external context in the stack, then the reentrancy pattern is not present
+    // Seeing as reentrancy cannot happen in an external context, if not detectred by the time we get to an external context in the stack then the reentrancy pattern is not present.
     while internal {
         let previous_id = get_previous_contract_id(call_frame_pointer);
 

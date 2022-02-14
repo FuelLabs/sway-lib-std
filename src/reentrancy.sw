@@ -6,8 +6,7 @@ library reentrancy;
 use ::context::contract_id;
 use ::auth::caller_is_external;
 use ::option::*;
-use ::constants::{SAVED_REGISTERS_OFFSET, CALL_FRAME_OFFSET};
-
+--use ::constants::{SAVED_REGISTERS_OFFSET,CALL_FRAME_OFFSET};
 
 /// Returns `true` if the reentrancy pattern is detected, and `false` otherwise.
 pub fn is_reentrant() -> bool {

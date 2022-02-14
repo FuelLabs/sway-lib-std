@@ -1,13 +1,8 @@
 use fuel_core::service::{Config, FuelService};
 use fuel_gql_client::client::FuelClient;
-use fuel_tx::{Receipt, Salt, Transaction};
+use fuel_tx::{Receipt, Transaction};
 use fuel_types::ContractId;
 use fuels_contract::script::Script;
-
-#[tokio::test]
-async fn demo_script() {
-    assert_eq!(true, true);
-}
 
 #[tokio::test]
 async fn script_call () {
@@ -39,8 +34,7 @@ async fn script_call () {
         is: 464,
     };
 
-    // assert_eq!(expected_receipt, result[0]);
-    // assert_eq!(result[0].val(), Some(0));
+    assert_eq!(expected_receipt, result[0]);
 }
 
 

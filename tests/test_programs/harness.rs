@@ -1,2 +1,2 @@
 // Manually add tests to run here, ie:
-// mod foo;
+mod reentrancy;

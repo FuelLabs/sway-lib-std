@@ -6,7 +6,7 @@ use std::{address::Address, contract_id::ContractId, token::*, context::balance_
 pub struct ParamsForceTransfer {
     coins: u64,
     asset_id: ContractId,
-    c_id: ContractId,
+    target: ContractId,
 }
 
 /// Parameters for `transfer_to_output` function.
@@ -41,7 +41,7 @@ impl TestFuelCoin for Contract {
     }
 
     fn force_transfer_coins(gas_: u64, amount_: u64, color_: b256, params: ParamsForceTransfer) {
-        force_transfer(params.coins, params.asset_id, params.c_id);
+        force_transfer(params.coins, params.asset_id, params.target);
     }
 
     fn transfer_coins_to_output(gas_: u64, amount_: u64, color_: b256, params: ParamsTransferToOutput) {

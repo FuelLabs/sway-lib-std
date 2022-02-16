@@ -7,3 +7,4 @@ name = "reentrancy_target_contract"
 [dependencies]
 core = { git = "http://github.com/FuelLabs/sway-lib-core" }
 std = { path = "../../../src" }
+target = { path = "../reentrancy_target_contract"}

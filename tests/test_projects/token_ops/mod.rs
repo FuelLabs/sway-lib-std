@@ -1,4 +1,4 @@
-use fuel_tx::{Salt};
+use fuel_tx::Salt;
 use fuels_abigen_macro::abigen;
 use fuels_contract::contract::Contract;
 use rand::rngs::StdRng;
@@ -8,13 +8,9 @@ use rand::{Rng, SeedableRng};
 async fn mint() {
     let salt = new_salt();
 
-    abigen!(
-        TestFuelCoinContract,
-        "test_projects/token_ops/src/abi.json",
-    );
+    abigen!(TestFuelCoinContract, "test_projects/token_ops/src/abi.json",);
 
-    let compiled =
-    Contract::compile_sway_contract("test_projects/token_ops", salt).unwrap();
+    let compiled = Contract::compile_sway_contract("test_projects/token_ops", salt).unwrap();
     // let fuelcoin_id = Contract::deploy(&compiled, &client).await.unwrap();
     let (client, fuelcoin_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
     println!("Contract deployed @ {:x}", fuelcoin_id);
@@ -31,22 +27,26 @@ async fn mint() {
         salt: 1u64, // temp, see: https://github.com/FuelLabs/fuels-rs/issues/89
     };
 
-    let mut balance_result = fuel_coin_instance.get_balance(balance_check_1).call().await.unwrap();
-    assert_eq!(balance_result.value, 0);
-
-    fuel_coin_instance
-        .mint_coins(11)
+    let mut balance_result = fuel_coin_instance
+        .get_balance(balance_check_1)
         .call()
         .await
         .unwrap();
+    assert_eq!(balance_result.value, 0);
 
-        let balance_check_2 = ParamsGetBalance {
-            target: fuelcoin_id.into(),
-            asset_id: c.clone(),
-            salt: 2u64,
-        };
+    fuel_coin_instance.mint_coins(11).call().await.unwrap();
 
-    balance_result = fuel_coin_instance.get_balance(balance_check_2).call().await.unwrap();
+    let balance_check_2 = ParamsGetBalance {
+        target: fuelcoin_id.into(),
+        asset_id: c.clone(),
+        salt: 2u64,
+    };
+
+    balance_result = fuel_coin_instance
+        .get_balance(balance_check_2)
+        .call()
+        .await
+        .unwrap();
     assert_eq!(balance_result.value, 11);
 }
 
@@ -54,13 +54,9 @@ async fn mint() {
 async fn burn() {
     let salt = new_salt();
 
-    abigen!(
-        TestFuelCoinContract,
-        "test_projects/token_ops/src/abi.json",
-    );
+    abigen!(TestFuelCoinContract, "test_projects/token_ops/src/abi.json",);
 
-    let compiled =
-    Contract::compile_sway_contract("test_projects/token_ops", salt).unwrap();
+    let compiled = Contract::compile_sway_contract("test_projects/token_ops", salt).unwrap();
     let (client, fuelcoin_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
     println!("Contract deployed @ {:x}", fuelcoin_id);
 
@@ -76,28 +72,28 @@ async fn burn() {
         salt: 1u64, // temp, see: https://github.com/FuelLabs/fuels-rs/issues/89
     };
 
-    let mut balance_result = fuel_coin_instance.get_balance(balance_check_1).call().await.unwrap();
+    let mut balance_result = fuel_coin_instance
+        .get_balance(balance_check_1)
+        .call()
+        .await
+        .unwrap();
     assert_eq!(balance_result.value, 0);
 
-    fuel_coin_instance
-        .mint_coins(11)
+    fuel_coin_instance.mint_coins(11).call().await.unwrap();
+
+    fuel_coin_instance.burn_coins(7).call().await.unwrap();
+
+    let balance_check_2 = ParamsGetBalance {
+        target: fuelcoin_id.into(),
+        asset_id: c.clone(),
+        salt: 2u64,
+    };
+
+    balance_result = fuel_coin_instance
+        .get_balance(balance_check_2)
         .call()
         .await
         .unwrap();
-
-        fuel_coin_instance
-        .burn_coins(7)
-        .call()
-        .await
-        .unwrap();
-
-        let balance_check_2 = ParamsGetBalance {
-            target: fuelcoin_id.into(),
-            asset_id: c.clone(),
-            salt: 2u64,
-        };
-
-    balance_result = fuel_coin_instance.get_balance(balance_check_2).call().await.unwrap();
     assert_eq!(balance_result.value, 4);
 }
 

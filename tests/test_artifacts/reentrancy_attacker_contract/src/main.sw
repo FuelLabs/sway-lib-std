@@ -13,9 +13,7 @@ abi Target {
 impl Target for Contract {
     fn can_be_reentered(gas_: u64, amount_: u64, color_: b256, input: ()) -> bool {
         let safe_from_reentry: bool = false;
-        // call attacker contract:
-        // add asm block here for call but don't commit, stash !
-        // PR the change in seperate PR
+        // call attacker contract here...
         let was_reentered = is_reentrant();
         was_reentered
     }

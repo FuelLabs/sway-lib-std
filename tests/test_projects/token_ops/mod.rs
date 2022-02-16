@@ -1,6 +1,6 @@
 use fuel_core::model::coin;
 use fuel_gql_client::client::{FuelClient};
-use fuel_tx::{Salt};
+use fuel_tx::{Receipt, Salt};
 use fuels_abigen_macro::abigen;
 use fuels_contract::contract::Contract;
 use rand::rngs::StdRng;
@@ -120,9 +120,6 @@ async fn force_transfer() {
 
     let (client, fuelcoin_id) = Contract::launch_and_deploy(&compiled_fuelcoin).await.unwrap();
     let (_, balance_test_contract_id) = Contract::launch_and_deploy(&compiled_balance_test).await.unwrap();
-    println!("Contract deployed @ {:x}", fuelcoin_id);
-    println!("Contract deployed @ {:x}", balance_test_contract_id);
-
     let fuel_coin_instance = TestFuelCoinContract::new(compiled_fuelcoin, client);
 
     let f = testfuelcoincontract_mod::ContractId {
@@ -170,12 +167,21 @@ async fn force_transfer() {
         .unwrap();
 
     let balance_check_3 = ParamsGetBalance {
-        target: balance_test_contract_id.into(),
+        target: fuelcoin_id.into(),
         asset_id: f.clone(),
         salt: 3u64, // temp, see: https://github.com/FuelLabs/fuels-rs/issues/89
     };
 
     balance_result = fuel_coin_instance.get_balance(balance_check_3).call().await.unwrap();
+    assert_eq!(balance_result.value, 58); // this is failing with Left = 100, Right = 58
+
+    let balance_check_4 = ParamsGetBalance {
+        target: balance_test_contract_id.into(),
+        asset_id: f.clone(),
+        salt: 4u64, // temp, see: https://github.com/FuelLabs/fuels-rs/issues/89
+    };
+
+    balance_result = fuel_coin_instance.get_balance(balance_check_4).call().await.unwrap();
     assert_eq!(balance_result.value, 42);
 }
 
@@ -190,10 +196,7 @@ async fn transfer_to_output() {
 
     let compiled_fuelcoin =
     Contract::compile_sway_contract("test_projects/token_ops", salt).unwrap();
-
     let (client, fuelcoin_id) = Contract::launch_and_deploy(&compiled_fuelcoin).await.unwrap();
-    println!("Contract deployed @ {:x}", fuelcoin_id);
-
     let fuel_coin_instance = TestFuelCoinContract::new(compiled_fuelcoin, client);
 
     let f = testfuelcoincontract_mod::ContractId {
@@ -234,9 +237,8 @@ async fn transfer_to_output() {
         recipient: a,
     };
 
-    let result = fuel_coin_instance.transfer_coins_to_output(transfer_args).call().await.unwrap();
-    println!{"RES: {:?}", result.value};
-    println!{"RES: {:?}", result.receipts};
+    fuel_coin_instance.transfer_coins_to_output(transfer_args).call().await.unwrap();
+    // TODO: add a check for balance of recipient address once capability is added to SDK
     unimplemented!("Finish this test!");
 
     // let coin_balance = client

@@ -4,8 +4,15 @@ use fuels_contract::contract::Contract;
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 
+// strategy
+// need 2 contracts deployed
+// create a method in contract A which can be reentered
+// add a check in the fn which uses the stdlib is_reentrant() funtion
+// make both reentrant and non-reentrant calls to this method
+
 #[tokio::test]
 async fn not_reentrant() {
+    unimplemented!();
     // abigen!(TestFuelCoinContract, "test_projects/token_ops/src/abi.json",);
     // let salt = new_salt();
     // let compiled = Contract::compile_sway_contract("test_projects/token_ops", salt).unwrap();
@@ -48,9 +55,11 @@ async fn not_reentrant() {
 }
 
 #[tokio::test]
-async fn is_reentrant() {}
+async fn is_reentrant() {
+    unimplemented!();
+}
 
 #[tokio::test]
 async fn script_usage_of_is_reentrant() {
-    //
+    unimplemented!();
 }

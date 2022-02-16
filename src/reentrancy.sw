@@ -53,7 +53,6 @@ fn get_previous_frame_pointer(frame_pointer: u64) -> u64 {
 // get the value of the previous `ContractId` from the previous call frame on the stack
 fn get_previous_contract_id(previous_frame_ptr: u64) -> ContractId {
     ~ContractId::from(asm(res, ptr: previous_frame_ptr) {
-        mcpi res ptr i32;
-        res: b256
+        ptr: b256
     })
 }

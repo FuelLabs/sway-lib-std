@@ -3,7 +3,7 @@ library math;
 // Technically this isn't Square in the mathematical sense
 // but there wasn't another good name for this trait
 pub trait Square {
-    fn sqrt(self, other: Self) -> Self;
+    fn sqrt(self) -> Self;
 }
 
 impl Square for u64 {

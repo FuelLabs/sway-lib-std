@@ -6,15 +6,10 @@ use rand::{Rng, SeedableRng};
 
 #[tokio::test]
 async fn mint() {
-    let salt = new_salt();
-
     abigen!(TestFuelCoinContract, "test_projects/token_ops/src/abi.json",);
-
+    let salt = new_salt();
     let compiled = Contract::compile_sway_contract("test_projects/token_ops", salt).unwrap();
-    // let fuelcoin_id = Contract::deploy(&compiled, &client).await.unwrap();
     let (client, fuelcoin_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    println!("Contract deployed @ {:x}", fuelcoin_id);
-
     let fuel_coin_instance = TestFuelCoinContract::new(compiled, client);
 
     let c = testfuelcoincontract_mod::ContractId {
@@ -32,6 +27,7 @@ async fn mint() {
         .call()
         .await
         .unwrap();
+
     assert_eq!(balance_result.value, 0);
 
     fuel_coin_instance.mint_coins(11).call().await.unwrap();
@@ -47,19 +43,16 @@ async fn mint() {
         .call()
         .await
         .unwrap();
+
     assert_eq!(balance_result.value, 11);
 }
 
 #[tokio::test]
 async fn burn() {
-    let salt = new_salt();
-
     abigen!(TestFuelCoinContract, "test_projects/token_ops/src/abi.json",);
-
+    let salt = new_salt();
     let compiled = Contract::compile_sway_contract("test_projects/token_ops", salt).unwrap();
     let (client, fuelcoin_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    println!("Contract deployed @ {:x}", fuelcoin_id);
-
     let fuel_coin_instance = TestFuelCoinContract::new(compiled, client);
 
     let c = testfuelcoincontract_mod::ContractId {
@@ -77,10 +70,10 @@ async fn burn() {
         .call()
         .await
         .unwrap();
+
     assert_eq!(balance_result.value, 0);
 
     fuel_coin_instance.mint_coins(11).call().await.unwrap();
-
     fuel_coin_instance.burn_coins(7).call().await.unwrap();
 
     let balance_check_2 = ParamsGetBalance {
@@ -94,6 +87,7 @@ async fn burn() {
         .call()
         .await
         .unwrap();
+
     assert_eq!(balance_result.value, 4);
 }
 

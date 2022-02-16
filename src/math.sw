@@ -7,37 +7,12 @@ pub trait Square {
 }
 
 impl Square for u64 {
-    fn sqrt(self, other: Self) -> Self {
-        asm(r1: self, r2: other, r3) {
-            sqrt r3 r2 r1;
+    fn sqrt(self) -> Self {
+        let square:u64 = 2;
+        asm(r1: self, r2: square, r3) {
+            mroo r3 r2 r2;
             r3: u64
         }
     }
 }
-
-impl Square for u32 {
-    fn sqrt(self, other: Self) -> Self {
-        asm(r1: self, r2: other, r3) {
-            sqrt r3 r2 r1;
-            r3: u32
-        }
-    }
-}
-
-impl Square for u16 {
-    fn sqrt(self, other: Self) -> Self {
-        asm(r1: self, r2: other, r3) {
-            sqrt r3 r2 r1;
-            r3: u16
-        }
-    }
-}
-
-impl Square for u8 {
-    fn sqrt(self, other: Self) -> Self {
-        asm(r1: self, r2: other, r3) {
-            sqrt r3 r2 r1;
-            r3: u8
-        }
-    }
 }

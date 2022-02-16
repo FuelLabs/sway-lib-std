@@ -15,4 +15,4 @@ impl Square for u64 {
         }
     }
 }
-}
+

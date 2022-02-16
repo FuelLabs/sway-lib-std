@@ -1,6 +1,6 @@
 contract;
 
-use std::{address::Address,contract_id::ContractId,token::*,context::balance_of_contract};
+---------use std::{address::Address,contract_id::ContractId,token::*,context::balance_of_contract};
 
 /// Parameters for `force_transfer` function.
 pub struct ParamsForceTransfer {

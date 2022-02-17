@@ -49,4 +49,16 @@ impl Result<T, E> {
             },
         }
     }
+
+    fn unwrap(self) -> T {
+        match self {
+            Result::Ok(t) => {
+                t
+            },
+            Result::Err(_) => {
+                panic(0);
+                Result::Ok()
+            },
+        }
+    }
 }

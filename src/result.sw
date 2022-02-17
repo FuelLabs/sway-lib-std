@@ -7,6 +7,8 @@
 
 library result;
 
+use ::chain::panic;
+
 /// `Result` is a type that represents either success ([`Ok`]) or failure
 /// ([`Err`]).
 pub enum Result<T, E> {
@@ -51,14 +53,10 @@ impl Result<T, E> {
     }
 
     fn unwrap(self) -> T {
-        match self {
-            Result::Ok(t) => {
-                t
-            },
-            Result::Err(_) => {
-                panic(0);
-                Result::Ok()
-            },
+        if let Result::Ok(inner_value) = x {
+            inner_value
+        } else {
+            panic(0);
         }
     }
 }

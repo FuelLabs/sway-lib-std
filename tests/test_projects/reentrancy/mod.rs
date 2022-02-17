@@ -56,10 +56,21 @@ async fn not_reentrant() {
 
 #[tokio::test]
 async fn is_reentrant() {
-    unimplemented!();
+    abigen!(AttackerContract, "test_artifacts/reentrancy_attacker_contract/src/abi.json",);
+    let salt = new_salt();
+    let compiled = Contract::compile_sway_contract("test_projects/token_ops", salt).unwrap();
+    let (client, fuelcoin_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let fuel_coin_instance = TestFuelCoinContract::new(compiled, client);
 }
 
 #[tokio::test]
 async fn script_usage_of_is_reentrant() {
     unimplemented!();
+}
+
+fn new_salt() -> Salt {
+    let rng = &mut StdRng::seed_from_u64(2321u64);
+    let salt: [u8; 32] = rng.gen();
+    let salt = Salt::from(salt);
+    salt
 }

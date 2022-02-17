@@ -8,3 +8,4 @@ name = "reentrancy_target_contract"
 core = { git = "http://github.com/FuelLabs/sway-lib-core" }
 std = { path = "../../../src" }
 attacker = { path = "../reentrancy_attacker_contract"}
+target_abi = { path = " ../reentrancy_target_abi"}

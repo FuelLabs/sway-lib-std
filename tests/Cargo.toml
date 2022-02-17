@@ -11,7 +11,7 @@ fuel-tx = "0.2.0"
 fuels-abigen-macro = "0.3"
 fuels-contract = "0.3"
 fuels-core = "0.3"
-fuel-core = "0.3.1"
+fuel-core = "0.3.2"
 fuel-types = "0.1"
 rand = "0.8"
 tokio = { version = "1.12", features = ["rt", "macros"] }

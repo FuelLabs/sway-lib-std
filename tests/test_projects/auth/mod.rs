@@ -2,6 +2,7 @@ use fuel_tx::{Receipt, Salt, Transaction};
 use fuels_abigen_macro::abigen;
 use fuels_contract::{contract::Contract, script::Script};
 use rand::rngs::StdRng;
+use fuel_types::ContractId;
 use rand::{Rng, SeedableRng};
 use fuel_core::service::{Config, FuelService};
 use fuel_gql_client::client::FuelClient;
@@ -104,7 +105,16 @@ async fn msg_sender_from_script() {
     let script = Script::new(tx);
 
     let receipts = script.call(&client).await.unwrap();
-    println!("Receipt: {:?}", receipts);
+
+    // not sure if I need this yet... from SDK tests in calls.rs
+    let expected_receipt = Receipt::Return {
+        id: ContractId::new([0u8; 32]),
+        val: 0,
+        pc: receipts[0].pc().unwrap(),
+        is: 464,
+    };
+
+    assert_eq!(expected_receipt, receipts[0]);
 }
 
 fn new_salt() -> Salt {

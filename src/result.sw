@@ -31,7 +31,7 @@ impl Result<T, E> {
     /// Returns `true` if the result is [`Ok`].
     fn is_ok(self) -> bool {
         match self {
-            Result::Ok(T) => {
+            Result::Ok(t) => {
                 true
             },
             _ => {
@@ -43,7 +43,7 @@ impl Result<T, E> {
     /// Returns `true` if the result is [`Err`].
     fn is_err(self) -> bool {
         match self {
-            Result::Ok(T) => {
+            Result::Ok(t) => {
                 false
             },
             _ => {

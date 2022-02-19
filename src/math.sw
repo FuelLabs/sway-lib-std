@@ -10,7 +10,7 @@ impl Square for u64 {
     fn sqrt(self) -> Self {
         let square:u64 = 2;
         asm(r1: self, r2: square, r3) {
-            mroo r3 r2 r2;
+            mroo r3 r1 r2;
             r3: u64
         }
     }

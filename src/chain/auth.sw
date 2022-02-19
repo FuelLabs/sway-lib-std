@@ -1,11 +1,10 @@
 library auth;
-//! Functionality for determining who is calling an ABI method
+//! Functionality for determining who is calling a contract.
 
-use ::contract_id::ContractId;
 use ::address::Address;
-use ::result::*;
 use ::b512::B512;
 use ::chain::assert;
+use ::contract_id::ContractId;
 use ::result::Result;
 
 
@@ -15,11 +14,11 @@ pub enum AuthError {
 
 pub enum Sender {
     Address: Address,
-    Id: ContractId,
+    ContractId: ContractId,
 }
 
-/// Returns `true` if the caller is external (ie: a script or predicate).
-// ref: https://github.com/FuelLabs/fuel-specs/blob/master/specs/vm/opcodes.md#gm-get-metadata
+/// Returns `true` if the caller is external (i.e. a script).
+/// ref: https://github.com/FuelLabs/fuel-specs/blob/master/specs/vm/opcodes.md#gm-get-metadata
 pub fn caller_is_external() -> bool {
     asm(r1) {
         gm r1 i1;
@@ -27,33 +26,32 @@ pub fn caller_is_external() -> bool {
     }
 }
 
-/// Get the `Sender` (ie: `Address`| ContractId) from which a call was made.
-/// Returns a Result::Ok(Sender) or Result::Error.
-// NOTE: Currently only returns Result::Ok variant if the parent context is Internal.
+fn caller_contract_id() -> ContractId {
+    ~ContractId::from(asm(r1) {
+        gm r1 i2;
+        r1: b256
+    })
+}
+
+/// Get the `Sender` (i.e. `Address`| `ContractId`) from which a call was made.
+/// Returns a `Result::Ok(Sender)` or `Result::Err` is a sender cannot be determined.
+/// NOTE: Currently only returns `Result::Ok` variant if the parent context is internal.
 pub fn msg_sender() -> Result<Sender, AuthError> {
     if caller_is_external() {
         let address = get_coins_owner();
-        if (address == ~Address::from(0x0000000000000000000000000000000000000000000000000000000000000000)) {
-            Result::Err(AuthError::ContextError)
+        if let Result::Ok(inner_value) = address {
+            Result::Ok(Sender::Address(address))
         } else {
-            Result::Some(Sender::Address(address)
+            Result::Err(AuthError::ContextError)
         }
     } else {
-        // Get caller's ContractId / TransactionId
-        let id = ~ContractId::from(asm(r1) {
-            gm r1 i2;
-            r1: b256
-        })
-        Caller::Some(id)
+        // Get caller's `ContractId`
+        Result::Ok(Sender::ContractId(caller_contract_id()))
+    }
 }
 
-
-
-
-// if the inputs type is InputCoin, return the owner
-// note that if the input is not of the type `InputCoin` (0), there won't be an owner and this could return unexpected data
-// TODO: Use Option type for the return here.
-fn get_input_owner(input_ptr: u32) -> Caller {
+/// If the input's type is `InputCoin`, return the owner. Otherwise, error.
+fn get_input_owner(input_ptr: u32) -> Result<Sender> {
         // get data offest by 1 word
         let data_ptr = asm(buffer, ptr: input_ptr, data_ptr) {
             move buffer sp;
@@ -71,24 +69,22 @@ fn get_input_owner(input_ptr: u32) -> Caller {
             buffer: b256
         });
 
-        Caller::Some(owner_addr)
+        Result::Ok(Sender::Address(owner_addr))
 
 }
 
-// inputsCount is the 7th word in a TransactionScript
-// TX_START        = 32 + MAX_INPUTS * (32 + 8)                // 32 + 8 * (40)  == 352
-// inputsCount     = TX_START + 7 words / 56 bytes             //       352 + 56 == 408
-// inputs          = TX_START + 12 words / 96 bytes            //       352 + 96 == 448
-/// Get the owner of the inputs(of type `InputCoin`) to a TransactionScript, if they all share the same owner.
-pub fn get_coins_owner() -> Caller {
+/// Get the owner of the inputs(of type `InputCoin`) to a TransactionScript,
+/// if they all share the same owner.
+pub fn get_coins_owner() -> Result<Sender> {
     let zero_addr = ~Address::from(0x0000000000000000000000000000000000000000000000000000000000000000);
     let target_input_type = 0u8;
+    let inputs_count = get_inputs_count();
+
     let mut candidate = ~Address::from(0x0000000000000000000000000000000000000000000000000000000000000000);
     let mut input_owner = ~Address::from(0x0000000000000000000000000000000000000000000000000000000000000000);
     let mut i = 0u8;
     let mut input_pointer: u32 = 0u32;
     let mut input_type: u8 = 0u8;
-    let inputs_count = get_inputs_count(408);
 
     while i < inputs_count {
         input_pointer = get_input_pointer(i);
@@ -108,18 +104,21 @@ pub fn get_coins_owner() -> Caller {
                     // owners are a match, continue looping
                     i = i + 1;
                 } else {
-                    // owners don't match. Break and return None
+                    // owners don't match. Break and return Err
                     i = inputs_count;
-                    Caller::None()
+                    Result::Err(AuthError::ContextError)
                };
             };
         };
     }
-    Caller::Some(candidate)
+    Result::Ok(Sender::Address(candidate))
 }
 
-// get a pointer to an input given the index of the input you're looking for
+/// Get a pointer to an input given the index of the input.
 fn get_input_pointer(n: u8) -> u32 {
+    // TX_START = 32 + MAX_INPUTS * (32 + 8) = 32 + 8 * (40) = 352
+    // inputs   = TX_START + 12 words = 352 + 96             = 448
+
     let input_start = asm(r1, r2: n) {
         xis r1 r2;
         r1: u64
@@ -130,7 +129,7 @@ fn get_input_pointer(n: u8) -> u32 {
         r1: u64
     };
 
-    // inputs is the 12th word in a TransactionScript
+    // Inputs begin at the 12th word in a TransactionScript
     asm(buffer, start: input_start, length: input_length, inputs_ptr: 448) {
         move buffer sp;
         mcp buffer input_start input_length;
@@ -138,7 +137,7 @@ fn get_input_pointer(n: u8) -> u32 {
     }
 }
 
-// get the type(0|1) of an input given a pointer to the input
+/// Get the type (0|1) of an input given a pointer to the input.
 fn get_input_type(p: u32) -> u8 {
     asm(type, ptr: p) {
         move type sp;
@@ -148,8 +147,13 @@ fn get_input_type(p: u32) -> u8 {
     }
 }
 
-fn get_inputs_count(offset: u64) -> u64 {
-    asm(r1, inputs_count_ptr: offset) {
+/// Get the number of inputs.
+fn get_inputs_count() -> u64 {
+    // inputsCount is the 7th word in a `TransactionScript`
+    // TX_START    = 32 + MAX_INPUTS * (32 + 8) = 32 + 8 * (40) = 352
+    // inputsCount = TX_START + 7 words = 352 + 56              = 408
+
+    asm(r1, inputs_count_ptr: 408) {
         lw r1 inputs_count_ptr i0;
         r1: u64
     }

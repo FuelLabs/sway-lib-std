@@ -32,22 +32,19 @@ pub fn caller_is_external() -> bool {
 // NOTE: Currently only returns Result::Ok variant if the parent context is Internal.
 pub fn msg_sender() -> Result<Sender, AuthError> {
     if caller_is_external() {
-        // TODO: Add call to get_coins_owner() here when implemented,
-        Result::Err(AuthError::ContextError)
+        let address = get_coins_owner();
+        if (address == ~Address::from(0x0000000000000000000000000000000000000000000000000000000000000000)) {
+            Result::Err(AuthError::ContextError)
+        } else {
+            Result::Some(Sender::Address(address)
+        }
     } else {
-        // Get caller's contract ID
+        // Get caller's ContractId / TransactionId
         let id = ~ContractId::from(asm(r1) {
             gm r1 i2;
             r1: b256
         })
-    } else {
-        let address = get_coins_owner();
-        if (address == ~Address::from(0x0000000000000000000000000000000000000000000000000000000000000000)) {
-            Caller::None
-        } else {
-            Caller::Some(address.value)
-        }
-    };
+        Caller::Some(id)
 }
 
 

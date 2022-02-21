@@ -29,7 +29,7 @@ impl Attacker for Contract {
         let current_id = contract_id();
         let attacker_caller = abi(Attacker, current_id);
         // TODO: fix this to use the 'target_id' returned by mesage_sender()!
-        // caller.launch_attack(1000, 0, ETH_ID, target_id);
+        // attacker_caller.launch_attack(1000, 0, ETH_ID, target_id);
         attacker_caller.launch_attack(1000, 0, ETH_ID, <TARGET_ID>);
         // consider use of 'if let' here to set value of attack_thwarted conditionally
         attack_thwarted

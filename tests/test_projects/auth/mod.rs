@@ -16,6 +16,23 @@ async fn is_external_from_internal() {
     let (client, _auth_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
     let auth_instance = AuthContract::new(compiled, client);
 
+    let result = auth_instance
+        .is_caller_external(true)
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, false);
+}
+
+#[tokio::test]
+#[should_panic]
+async fn is_external_from_external() {
+    abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi.json");
+    let salt = new_salt();
+    let compiled = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
+    let (client, _auth_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let auth_instance = AuthContract::new(compiled, client);
 
     let result = auth_instance
         .is_caller_external(true)
@@ -23,13 +40,8 @@ async fn is_external_from_internal() {
         .await
         .unwrap();
 
-        assert_eq!(result.value, false);
+    assert_eq!(result.value, false);
 }
-
-// #[tokio::test]
-// async fn is_external_from_external() {
-
-// }
 
 #[tokio::test]
 async fn msg_sender_from_internal_sdk_call() {

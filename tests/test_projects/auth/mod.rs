@@ -56,7 +56,7 @@ async fn msg_sender_from_internal_sdk_call() {
 #[tokio::test]
 async fn msg_sender_from_internal_contract() {
     // need to deploy 2 contracts !
-    abigen!(AuthCallerContract, "test_artifacts/auth_caller_contract/src/abi.json");
+    abigen!(AuthCallerContract, "test_artifacts/auth_caller_contract/src/json-abi-output.json");
     let salt = new_salt();
     let compiled = Contract::compile_sway_contract("test_artifacts/auth_caller_contract", salt).unwrap();
     let (client, auth_caller_id) = Contract::launch_and_deploy(&compiled).await.unwrap();

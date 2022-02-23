@@ -30,7 +30,8 @@ pub fn msg_sender() -> b256 {
     if caller_is_external() {
         // TODO: Add call to get_coins_owner() here when implemented,
         // Result::Err(AuthError::ContextError)
-        0x0000000000000000000000000000000000000000000000000000000000000000
+        let res: b256 = 0x0000000000000000000000000000000000000000000000000000000000000000;
+        res
     } else {
         // Get caller's contract ID
         // let id = ~ContractId::from(asm(r1) {

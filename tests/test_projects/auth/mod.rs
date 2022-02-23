@@ -26,10 +26,12 @@ async fn is_external_from_sdk() {
 
     println!("result: {:#?}", result);
 
-    assert_eq!(result.value, false);
+    assert_eq!(result.value, true);
 }
 
+// TODO: when result is usable, should return AuthError
 #[tokio::test]
+#[should_panic(expected = "InvalidData")]
 async fn msg_sender_from_sdk() {
     abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi-output.json");
     let salt = Salt::from([0u8; 32]);

@@ -26,16 +26,22 @@ pub fn caller_is_external() -> bool {
 /// Get the `Sender` (ie: `Address`| ContractId) from which a call was made.
 /// Returns a Result::Ok(Sender) or Result::Error.
 // NOTE: Currently only returns Result::Ok variant if the parent context is Internal.
-pub fn msg_sender() -> Result<Sender, AuthError> {
+pub fn msg_sender() -> b256 {
     if caller_is_external() {
         // TODO: Add call to get_coins_owner() here when implemented,
-        Result::Err(AuthError::ContextError)
+        // Result::Err(AuthError::ContextError)
+        0x0000000000000000000000000000000000000000000000000000000000000000
     } else {
         // Get caller's contract ID
-        let id = ~ContractId::from(asm(r1) {
+        // let id = ~ContractId::from(asm(r1) {
+        //     gm r1 i2;
+        //     r1: b256
+        // });
+        // Result::Ok(Sender::Id(id))
+        // id.value
+        asm(r1) {
             gm r1 i2;
             r1: b256
-        });
-        Result::Ok(Sender::Id(id))
+        }
     }
 }

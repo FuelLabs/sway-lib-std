@@ -1,0 +1,365 @@
+diff --git a/src/chain/auth.sw b/src/chain/auth.sw
+index 82b280c..b3b4ecc 100644
+--- a/src/chain/auth.sw
++++ b/src/chain/auth.sw
+@@ -26,16 +26,23 @@ pub fn caller_is_external() -> bool {
+ /// Get the `Sender` (ie: `Address`| ContractId) from which a call was made.
+ /// Returns a Result::Ok(Sender) or Result::Error.
+ // NOTE: Currently only returns Result::Ok variant if the parent context is Internal.
+-pub fn msg_sender() -> Result<Sender, AuthError> {
++pub fn msg_sender() -> b256 {
+     if caller_is_external() {
+         // TODO: Add call to get_coins_owner() here when implemented,
+-        Result::Err(AuthError::ContextError)
++        // Result::Err(AuthError::ContextError)
++        let res: b256 = 0x0000000000000000000000000000000000000000000000000000000000000000;
++        res
+     } else {
+         // Get caller's contract ID
+-        let id = ~ContractId::from(asm(r1) {
++        // let id = ~ContractId::from(asm(r1) {
++        //     gm r1 i2;
++        //     r1: b256
++        // });
++        // Result::Ok(Sender::Id(id))
++        // id.value
++        asm(r1) {
+             gm r1 i2;
+             r1: b256
+-        });
+-        Result::Ok(Sender::Id(id))
++        }
+     }
+ }
+diff --git a/tests/Cargo.toml b/tests/Cargo.toml
+index 4d96d13..2744ec2 100644
+--- a/tests/Cargo.toml
++++ b/tests/Cargo.toml
+@@ -6,13 +6,16 @@ name = "tests"
+ version = "0.1.0"
+ 
+ [dependencies]
+-fuel-gql-client = { version = "0.2", default-features = false }
+-fuel-tx = "0.2.0"
+-fuels-abigen-macro = "0.3"
+-fuels-contract = "0.3"
+-fuels-core = "0.3"
++fuel-gql-client = { version = "0.3.2", default-features = false }
++fuel-tx = "0.5.0"
++# fuels-abigen-macro = "0.4.0"
++# fuels-contract = "0.4.0"
++# fuels-core ="0.4.0"
++fuels-abigen-macro = { path = "../../fuels-rs/fuels-abigen-macro" }
++fuels-contract = { path = "../../fuels-rs/fuels-contract" }
++fuels-core = { path = "../../fuels-rs/fuels-core" }
+ fuel-core = "0.3.2"
+-fuel-types = "0.1"
++fuel-types = "0.2.0"
+ rand = "0.8"
+ tokio = { version = "1.12", features = ["rt", "macros"] }
+ 
+diff --git a/tests/test_artifacts/auth_caller_contract/src/abi-output.json b/tests/test_artifacts/auth_caller_contract/src/abi-output.json
+index 0fd444d..ba5c668 100644
+--- a/tests/test_artifacts/auth_caller_contract/src/abi-output.json
++++ b/tests/test_artifacts/auth_caller_contract/src/abi-output.json
+@@ -1 +1 @@
+-[{"inputs":[{"components":null,"name":"gas_","type":"u64"},{"components":null,"name":"amount_","type":"u64"},{"components":null,"name":"color_","type":"b256"},{"components":null,"name":"value","type":"bool"}],"name":"call_auth_contract","outputs":[{"components":null,"name":"","type":"b256"}],"type":"function"}]
+\ No newline at end of file
++[{"inputs":[{"components":null,"name":"gas_","type":"u64"},{"components":null,"name":"amount_","type":"u64"},{"components":null,"name":"color_","type":"b256"},{"components":null,"name":"input","type":"()"}],"name":"call_auth_contract","outputs":[{"components":null,"name":"","type":"b256"}],"type":"function"}]
+\ No newline at end of file
+diff --git a/tests/test_artifacts/auth_caller_contract/src/main.sw b/tests/test_artifacts/auth_caller_contract/src/main.sw
+index 9f50e7f..700f2c7 100644
+--- a/tests/test_artifacts/auth_caller_contract/src/main.sw
++++ b/tests/test_artifacts/auth_caller_contract/src/main.sw
+@@ -5,13 +5,13 @@ use std::contract_id::ContractId;
+ use std::constants::ETH_ID;
+ 
+ abi AuthCaller {
+-    fn call_auth_contract(gas_: u64, amount_: u64, color_: b256, value: bool) -> ContractId;
++    fn call_auth_contract(gas_: u64, amount_: u64, color_: b256, input: ()) -> b256;
+ }
+ 
+ impl AuthCaller for Contract {
+-    fn call_auth_contract(gas_: u64, amount_: u64, color_: b256, value: bool) -> ContractId {
+-        let auth_contract = abi(AuthTesting, 0x5ad197a654f39e2377e388ec40de7693ef2aeb313fe7f8ddc4a385fb22afebce);
+-        let id = auth_contract.returns_msg_sender(10000, 0, ETH_ID, true);
++    fn call_auth_contract(gas_: u64, amount_: u64, color_: b256, input: ()) -> b256 {
++        let auth_contract = abi(AuthTesting, 0x31339370c797efcecd4d33d4e36d95dc19479917afde2a930d44c04b37b4c368);
++        let id = auth_contract.returns_msg_sender(10000, 0, ETH_ID, ());
+         id
+     }
+ }
+diff --git a/tests/test_artifacts/auth_caller_script/src/main.sw b/tests/test_artifacts/auth_caller_script/src/main.sw
+index 9f2b4c0..eabdd97 100644
+--- a/tests/test_artifacts/auth_caller_script/src/main.sw
++++ b/tests/test_artifacts/auth_caller_script/src/main.sw
+@@ -6,7 +6,7 @@ use std::constants::ETH_ID;
+ 
+ // move script to test_projects/auth/src/main ?
+ fn main() -> b256 {
+-    let auth_contract = abi(AuthTesting, 0x1abee6eff3cf03d9d9dfc85cb372288c44379a86d71b1e60cc7d83dacec3d14a);
+-    let id = auth_contract.returns_msg_sender(10000, 0, ETH_ID, true);
++    let auth_contract = abi(AuthTesting, 0x31339370c797efcecd4d33d4e36d95dc19479917afde2a930d44c04b37b4c368);
++    let id = auth_contract.returns_msg_sender(10000, 0, ETH_ID, ());
+     id
+ }
+diff --git a/tests/test_artifacts/auth_testing_abi/src/main.sw b/tests/test_artifacts/auth_testing_abi/src/main.sw
+index e0657d6..e241f04 100644
+--- a/tests/test_artifacts/auth_testing_abi/src/main.sw
++++ b/tests/test_artifacts/auth_testing_abi/src/main.sw
+@@ -3,6 +3,6 @@ library auth_testing_abi;
+ use std::contract_id::ContractId;
+ 
+ abi AuthTesting {
+-    fn is_caller_external(gas_: u64, amount_: u64, color_: b256, value: bool) -> bool;
+-    fn returns_msg_sender(gas_: u64, amount_: u64, color_: b256, value: bool) -> ContractId;
++    fn is_caller_external(gas_: u64, amount_: u64, color_: b256, input: ()) -> bool;
++    fn returns_msg_sender(gas_: u64, amount_: u64, color_: b256, input: ()) -> b256;
+ }
+diff --git a/tests/test_artifacts/auth_testing_contract/src/abi-output.json b/tests/test_artifacts/auth_testing_contract/src/abi-output.json
+index b358cc2..3e3d65f 100644
+--- a/tests/test_artifacts/auth_testing_contract/src/abi-output.json
++++ b/tests/test_artifacts/auth_testing_contract/src/abi-output.json
+@@ -1 +1,24 @@
+-[{"inputs":[{"components":null,"name":"gas_","type":"u64"},{"components":null,"name":"amount_","type":"u64"},{"components":null,"name":"color_","type":"b256"},{"components":null,"name":"value","type":"bool"}],"name":"is_caller_external","outputs":[{"components":null,"name":"","type":"bool"}],"type":"function"},{"inputs":[{"components":null,"name":"gas_","type":"u64"},{"components":null,"name":"amount_","type":"u64"},{"components":null,"name":"color_","type":"b256"},{"components":null,"name":"value","type":"bool"}],"name":"returns_msg_sender","outputs":[{"components":null,"name":"","type":"b256"}],"type":"function"}]
+\ No newline at end of file
++[
++  {
++    "inputs": [
++      { "components": null, "name": "gas_", "type": "u64" },
++      { "components": null, "name": "amount_", "type": "u64" },
++      { "components": null, "name": "color_", "type": "b256" },
++      { "components": null, "name": "input", "type": "()" }
++    ],
++    "name": "is_caller_external",
++    "outputs": [{ "components": null, "name": "", "type": "bool" }],
++    "type": "function"
++  },
++  {
++    "inputs": [
++      { "components": null, "name": "gas_", "type": "u64" },
++      { "components": null, "name": "amount_", "type": "u64" },
++      { "components": null, "name": "color_", "type": "b256" },
++      { "components": null, "name": "input", "type": "()" }
++    ],
++    "name": "returns_msg_sender",
++    "outputs": [{ "components": null, "name": "", "type": "b256" }],
++    "type": "function"
++  }
++]
+diff --git a/tests/test_artifacts/auth_testing_contract/src/main.sw b/tests/test_artifacts/auth_testing_contract/src/main.sw
+index e295521..2fb1620 100644
+--- a/tests/test_artifacts/auth_testing_contract/src/main.sw
++++ b/tests/test_artifacts/auth_testing_contract/src/main.sw
+@@ -7,12 +7,12 @@ use auth::AuthTesting;
+ 
+ 
+ impl AuthTesting for Contract {
+-    fn is_caller_external(gas_: u64, amount_: u64, color_: b256, value: bool) -> bool {
++    fn is_caller_external(gas_: u64, amount_: u64, color_: b256, input: ()) -> bool {
+         caller_is_external()
+     }
+ 
+     /// TODO: Fix return type, supposed to be a `Result`
+-    fn returns_msg_sender(gas_: u64, amount_: u64, color_: b256, value: bool) -> ContractId {
++    fn returns_msg_sender(gas_: u64, amount_: u64, color_: b256, input: ()) -> b256 {
+         msg_sender()
+     }
+ }
+diff --git a/tests/test_projects/auth/mod.rs b/tests/test_projects/auth/mod.rs
+index 9260b6b..6b4b8b8 100644
+--- a/tests/test_projects/auth/mod.rs
++++ b/tests/test_projects/auth/mod.rs
+@@ -1,84 +1,86 @@
+-use fuel_tx::{Receipt, Salt, Transaction};
++use fuel_tx::{Receipt, Salt, Transaction, ContractId};
+ use fuels_abigen_macro::abigen;
+ use fuels_contract::{contract::Contract, script::Script};
+-use rand::rngs::StdRng;
+-use fuel_types::ContractId;
+-use rand::{Rng, SeedableRng};
++// use rand::rngs::StdRng;
++// use fuel_types::ContractId;
++// use rand::{Rng, SeedableRng};
+ use fuel_core::service::{Config, FuelService};
+ use fuel_gql_client::client::FuelClient;
+ 
+ 
+ #[tokio::test]
+-async fn is_external_from_internal() {
+-    abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi.json");
+-    let salt = new_salt();
++async fn is_external_from_sdk() {
++    abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi-output.json");
++    let salt = Salt::from([0u8; 32]);
+     let compiled = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
+-    let (client, _auth_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
++    let (client, auth_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+     let auth_instance = AuthContract::new(compiled, client);
+ 
+-    let result = auth_instance
+-        .is_caller_external(true)
+-        .call()
+-        .await
+-        .unwrap();
+-
+-    assert_eq!(result.value, false);
+-}
+-
+-#[tokio::test]
+-#[should_panic]
+-async fn is_external_from_external() {
+-    abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi.json");
+-    let salt = new_salt();
+-    let compiled = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
+-    let (client, _auth_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+-    let auth_instance = AuthContract::new(compiled, client);
++    println!("Auth Contract Id: {:?}", auth_id);
+ 
+     let result = auth_instance
+-        .is_caller_external(true)
++        .is_caller_external()
+         .call()
+         .await
+         .unwrap();
+ 
+-    assert_eq!(result.value, false);
++    println!("result: {:#?}", result);
++
++    assert_eq!(result.value, true);
+ }
+ 
++// TODO: when result is usable, should return AuthError
+ #[tokio::test]
+-async fn msg_sender_from_internal_sdk_call() {
+-    abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi.json");
+-    let salt = new_salt();
++// #[should_panic(expected = "InvalidData")]
++async fn msg_sender_from_sdk() {
++    abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi-output.json");
++    let salt = Salt::from([0u8; 32]);
+     let compiled = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
+-    let (client, _auth_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
++    let (client, auth_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+     let auth_instance = AuthContract::new(compiled, client);
+ 
++    println!("Auth Contract Id: {:?}", auth_id);
++
+     // let zero_id = authcontract_mod::ContractId {
+     //     value: [0u8; 32],
+     // };
+ 
+-    let result = auth_instance
+-        .returns_msg_sender(true)
++    let result_1 = auth_instance
++        .is_caller_external()
++        .call()
++        .await
++        .unwrap();
++
++    let result_2 = auth_instance
++        .returns_msg_sender()
+         .call()
+         .await
+         .unwrap();
+ 
+-        // TODO: Fix this, should be returning a `Result`
+-        assert_eq!(result.value, 2);
++    println!("Receipts: {:?}", result_1);
++    println!("Receipts: {:?}", result_2);
++
++    // TODO: Fix this, should be returning a `Result`
++    assert_eq!(result_1.value, true);
++    assert_eq!(result_2.value, [0u8; 32]);
+ }
+ 
+ #[tokio::test]
+-async fn msg_sender_from_internal_contract() {
+-    // need to deploy 2 contracts !
+-    abigen!(AuthCallerContract, "test_artifacts/auth_caller_contract/src/json-abi-output.json");
+-    let salt = new_salt();
++async fn msg_sender_from_contract() {
++    abigen!(AuthCallerContract, "test_artifacts/auth_caller_contract/src/abi-output.json");
++    let salt = Salt::from([0u8; 32]);
+     let compiled = Contract::compile_sway_contract("test_artifacts/auth_caller_contract", salt).unwrap();
+-    let (client, auth_caller_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+-    let auth_caller_instance = AuthCallerContract::new(compiled, client);
+ 
++    let (client, auth_caller_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
++    let auth_caller_instance = AuthCallerContract::new(compiled, client.clone());
+     let compiled_2 = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
+-    let (_client, _auth_id) = Contract::launch_and_deploy(&compiled_2).await.unwrap();
++    let auth_id = Contract::deploy(&compiled_2, &client).await.unwrap();
+ 
++    println!("Auth Contract Id: {:?}", auth_id);
++    println!("Auth Caller Contract Id: {:?}", auth_caller_id);
+ 
+-    // let _zero_id = authcallercontract_mod::ContractId {
++
++    // let zero_id = authcallercontract_mod::ContractId {
+     //     value: auth_caller_id.into(),
+     // };
+ 
+@@ -87,25 +89,29 @@ async fn msg_sender_from_internal_contract() {
+     // };
+ 
+     let result = auth_caller_instance
+-        .call_auth_contract(true)
++        .call_auth_contract()
+         .call()
+         .await
+         .unwrap();
+ 
+-        assert_eq!(result.value, 2);
++        assert_eq!(result.value, [0u8; 32]);
+ }
+ 
+ #[tokio::test]
+-async fn msg_sender_from_script() {
++async fn msg_sender_from_sway_script() {
+     let client = setup_local_node().await;
+     let compiled = Script::compile_sway_script("test_artifacts/auth_caller_script").unwrap();
++    // let salt = Salt::from([0u8; 32]);
++    // let compiled_2 = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
++    // let auth_id = Contract::deploy(&compiled_2, &client).await.unwrap();
+ 
+     let tx = Transaction::Script {
+         gas_price: 0,
+-        gas_limit: 1_000_000_000,
++        gas_limit: 1_000_000,
++        byte_price: 0,
+         maturity: 0,
+         receipts_root: Default::default(),
+-        script: compiled.raw, // Here we pass the compiled script into the transaction
++        script: compiled.raw,
+         script_data: vec![],
+         inputs: vec![],
+         outputs: vec![],
+@@ -113,7 +119,7 @@ async fn msg_sender_from_script() {
+         metadata: None,
+     };
+ 
+-    println!("{:?}", &tx);
++    // println!("{:?}", &tx);
+     let script = Script::new(tx);
+ 
+     let receipts = script.call(&client).await.unwrap();
+@@ -129,12 +135,12 @@ async fn msg_sender_from_script() {
+     assert_eq!(expected_receipt, receipts[0]);
+ }
+ 
+-fn new_salt() -> Salt {
+-    let rng = &mut StdRng::seed_from_u64(2321u64);
+-    let salt: [u8; 32] = rng.gen();
+-    let salt = Salt::from(salt);
+-    salt
+-}
++// fn new_salt() -> Salt {
++//     let rng = &mut StdRng::seed_from_u64(2321u64);
++//     let salt: [u8; 32] = rng.gen();
++//     let salt = Salt::from(salt);
++//     salt
++// }
+ 
+ async fn setup_local_node() -> FuelClient {
+     let srv = FuelService::new_node(Config::local_node()).await.unwrap();

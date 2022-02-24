@@ -19,7 +19,7 @@ async fn is_external_from_sdk() {
     println!("Auth Contract Id: {:?}", auth_id);
 
     let result = auth_instance
-        .is_caller_external(true)
+        .is_caller_external()
         .call()
         .await
         .unwrap();
@@ -31,7 +31,7 @@ async fn is_external_from_sdk() {
 
 // TODO: when result is usable, should return AuthError
 #[tokio::test]
-#[should_panic(expected = "InvalidData")]
+// #[should_panic(expected = "InvalidData")]
 async fn msg_sender_from_sdk() {
     abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi-output.json");
     let salt = Salt::from([0u8; 32]);
@@ -45,16 +45,24 @@ async fn msg_sender_from_sdk() {
     //     value: [0u8; 32],
     // };
 
-    let result = auth_instance
-        .returns_msg_sender(true)
+    let result_1 = auth_instance
+        .is_caller_external()
         .call()
         .await
         .unwrap();
 
-    println!("Receipts: {:?}", result);
+    let result_2 = auth_instance
+        .returns_msg_sender()
+        .call()
+        .await
+        .unwrap();
+
+    println!("Receipts: {:?}", result_1);
+    println!("Receipts: {:?}", result_2);
 
     // TODO: Fix this, should be returning a `Result`
-    assert_eq!(result.value, [0u8; 32]);
+    assert_eq!(result_1.value, true);
+    assert_eq!(result_2.value, [0u8; 32]);
 }
 
 #[tokio::test]
@@ -81,7 +89,7 @@ async fn msg_sender_from_contract() {
     // };
 
     let result = auth_caller_instance
-        .call_auth_contract(true)
+        .call_auth_contract()
         .call()
         .await
         .unwrap();

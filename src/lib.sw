@@ -1,5 +1,6 @@
 library std;
 
+dep registers;
 dep result;
 dep hash;
 dep storage;

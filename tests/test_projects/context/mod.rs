@@ -2,6 +2,7 @@ use fuel_tx::Salt;
 use fuels_abigen_macro::abigen;
 use fuels_contract::contract::Contract;
 
+
 #[tokio::test]
 #[ignore]
 async fn can_get_contract_id() {

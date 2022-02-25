@@ -2,37 +2,277 @@ use fuel_tx::Salt;
 use fuels_abigen_macro::abigen;
 use fuels_contract::contract::Contract;
 
-#[tokio::test]
-async fn call_zero() {
 
+#[tokio::test]
+async fn can_get_zero() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
+
+    let mut result = instance
+        .get_zero()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, 0);
 }
 
-async fn <FUNC> () {}
+#[tokio::test]
+async fn can_get_one() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
 
-async fn <FUNC> () {}
+    let mut result = instance
+        .get_one()
+        .call()
+        .await
+        .unwrap();
 
-async fn <FUNC> () {}
+    assert_eq!(result.value, 1);
+}
 
-async fn <FUNC> () {}
+#[tokio::test]
+async fn can_get_overflow() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
 
-async fn <FUNC> () {}
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
 
-async fn <FUNC> () {}
+    assert_eq!(result.value, 0);
+}
 
-async fn <FUNC> () {}
+#[tokio::test]
+async fn can_get_program_counter() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
 
-async fn <FUNC> () {}
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
 
-async fn <FUNC> () {}
+    assert_eq!(result.value, 0);
+}
 
-async fn <FUNC> () {}
+#[tokio::test]
+async fn can_get_stack_start_ptr() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
 
-async fn <FUNC> () {}
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
 
-async fn <FUNC> () {}
+    assert_eq!(result.value, 0);
+}
 
-async fn <FUNC> () {}
+#[tokio::test]
+async fn can_get_stack_ptr() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
 
-async fn <FUNC> () {}
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
 
-async fn <FUNC> () {}
+    assert_eq!(result.value, 0);
+}
+
+#[tokio::test]
+async fn can_get_frame_ptr() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
+
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, 0);
+}
+
+#[tokio::test]
+async fn can_get_heap_ptr() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
+
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, 0);
+}
+
+#[tokio::test]
+async fn can_get_error() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
+
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, 0);
+}
+
+#[tokio::test]
+async fn can_get_global_gas() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
+
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, 0);
+}
+
+#[tokio::test]
+async fn can_get_context_gas() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
+
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, 0);
+}
+
+#[tokio::test]
+async fn can_get_balance() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
+
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, 0);
+}
+
+#[tokio::test]
+async fn can_get_instrs_start() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
+
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, 0);
+}
+
+#[tokio::test]
+#[ignore]
+async fn can_get_return_value() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
+
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, 0);
+}
+
+#[tokio::test]
+#[ignore]
+async fn can_get_return_length() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
+
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, 0);
+}
+
+#[tokio::test]
+async fn can_get_flags() {
+    abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
+    let (client, id) = Contract::launch_and_deploy(&compiled).await.unwrap();
+    let instance = TestFuelCoinContract::new(compiled, client);
+
+    let mut result = instance
+        .get_overflow()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, 0);
+}

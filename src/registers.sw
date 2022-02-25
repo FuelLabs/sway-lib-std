@@ -94,18 +94,18 @@ pub fn instrs_start() -> u64 {
 }
 
 /// Return value or pointer.
-pub fn return_value() -> u64 {
-    asm() {
-        ret
-    }
-}
+// pub fn return_value() -> u64 {
+//     asm() {
+//         ret
+//     }
+// }
 
 /// Return value length in bytes.
-pub fn return_length() -> u64 {
-    asm() {
-        retl
-    }
-}
+// pub fn return_length() -> u64 {
+//     asm() {
+//         retl
+//     }
+// }
 
 /// Flags register.
 pub fn flags() -> u64 {

@@ -1,5 +1,6 @@
 library std;
 
+dep call_frames;
 dep result;
 dep hash;
 dep storage;

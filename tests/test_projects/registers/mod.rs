@@ -225,7 +225,6 @@ async fn can_get_instrs_start() {
 }
 
 #[tokio::test]
-#[ignore]
 async fn can_get_return_value() {
     abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
     let salt = Salt::from([0u8; 32]);
@@ -243,7 +242,6 @@ async fn can_get_return_value() {
 }
 
 #[tokio::test]
-#[ignore]
 async fn can_get_return_length() {
     abigen!(TestFuelCoinContract, "test_projects/registers/src/output-abi.json",);
     let salt = Salt::from([0u8; 32]);

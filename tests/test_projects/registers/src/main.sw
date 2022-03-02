@@ -3,8 +3,6 @@ contract;
 use std::registers::*;
 
 abi Registers {
-    fn get_zero(gas_: u64, amount_: u64, color_: b256, input: ()) -> u64;
-    fn get_one(gas_: u64, amount_: u64, color_: b256, input: ()) -> u64;
     fn get_overflow(gas_: u64, amount_: u64, color_: b256, input: ()) -> u64;
     fn get_program_counter(gas_: u64, amount_: u64, color_: b256, input: ()) -> u64;
     fn get_stack_start_ptr(gas_: u64, amount_: u64, color_: b256, input: ()) -> u64;
@@ -22,13 +20,6 @@ abi Registers {
 }
 
 impl Registers for Contract {
-    fn get_zero(gas_: u64, amount_: u64, color_: b256, input: ()) -> u64 {
-        zero()
-    }
-
-    fn get_one(gas_: u64, amount_: u64, color_: b256, input: ()) -> u64 {
-        one()
-    }
 
     fn get_overflow(gas_: u64, amount_: u64, color_: b256, input: ()) -> u64 {
         overflow()

@@ -7,3 +7,4 @@ name = "context"
 [dependencies]
 core = { git = "http://github.com/FuelLabs/sway-lib-core" }
 std = { path = "../../../src" }
+context_testing_abi = { path = "../../test_artifacts/context_testing_abi"}

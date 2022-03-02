@@ -1,0 +1,9 @@
+[project]
+authors = ["Nicholas Furfaro"]
+entry = "main.sw"
+license = "Apache-2.0"
+name = "contest_testing_abi"
+
+[dependencies]
+core = { git = "http://github.com/FuelLabs/sway-lib-core" }
+std = { git = "http://github.com/FuelLabs/sway-lib-std" }

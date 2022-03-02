@@ -27,11 +27,19 @@ impl Option<T> {
 
     /// Returns `true` if the result is [`Some`].
     fn is_some(self) -> bool {
-      if let Option::Some(t) = self { true } else { false } 
+        if let Option::Some(t) = self {
+            true
+        } else {
+            false
+        }
     }
 
     /// Returns `true` if the result is [`None`].
     fn is_none(self) -> bool {
-      if let Option::Some(t) = self { false } else { true } 
+        if let Option::Some(t) = self {
+            false
+        } else {
+            true
+        }
     }
 }

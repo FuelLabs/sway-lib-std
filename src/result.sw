@@ -28,11 +28,19 @@ impl Result<T, E> {
 
     /// Returns `true` if the result is [`Ok`].
     fn is_ok(self) -> bool {
-        if let Result::Ok(t) = self { true } else { false } 
+        if let Result::Ok(t) = self {
+            true
+        } else {
+            false
+        }
     }
 
     /// Returns `true` if the result is [`Err`].
     fn is_err(self) -> bool {
-        if let Result::Ok(t) = self { false } else { true } 
+        if let Result::Ok(t) = self {
+            false
+        } else {
+            true
+        }
     }
 }

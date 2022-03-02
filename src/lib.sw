@@ -1,10 +1,10 @@
 library std;
 
+dep constants;
 dep call_frames;
 dep result;
 dep hash;
 dep storage;
-dep constants;
 dep b512;
 dep address;
 dep contract_id;

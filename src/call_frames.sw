@@ -3,11 +3,11 @@
 /// https://github.com/FuelLabs/fuel-specs/blob/master/specs/vm/main.md#call-frames
 library call_frames;
 
-use ::constants::{SAVED_REGISTERS_OFFSET, CALL_FRAME_OFFSET, CODE_SIZE_OFFSET, FIRST_PARAM_OFFSET, SECOND_PARAM_OFFSET};
+use ::constants::{CALL_FRAME_OFFSET, CODE_SIZE_OFFSET, FIRST_PARAM_OFFSET, SAVED_REGISTERS_OFFSET, SECOND_PARAM_OFFSET};
 use ::contract_id::ContractId;
 
 ///////////////////////////////////////////////////////////
-//  Accessing the current call frame:
+//  Accessing the current call frame
 ///////////////////////////////////////////////////////////
 
 /// Get the current contract's id when called in an internal context.
@@ -52,14 +52,14 @@ pub fn second_param() -> u64 {
 }
 
 ///////////////////////////////////////////////////////////
-//  Helper functions:
+//  Helper functions
 ///////////////////////////////////////////////////////////
 
 /// get a pointer to the current call frame
 pub fn frame_pointer() -> u64 {
     asm() {
         fp: u64
-    };
+    }
 }
 
 /// Get a pointer to the previous (relative to the 'frame_pointer' param) call frame using offsets from a pointer.

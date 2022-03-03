@@ -8,3 +8,6 @@ const MAX_B256 = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 const SAVED_REGISTERS_OFFSET = 64;
 // https://github.com/FuelLabs/fuel-specs/blob/master/specs/vm/main.md#semantics
 const CALL_FRAME_OFFSET = 48;
+const CODE_SIZE_OFFSET = 576;
+const FIRST_PARAM_OFFSET = 584;
+const SECOND_PARAM_OFFSET = 592;

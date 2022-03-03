@@ -1,11 +1,13 @@
+use fuel_core::service::Config;
 use fuel_tx::Salt;
 use fuels_abigen_macro::abigen;
 use fuels_contract::contract::Contract;
 use fuels_signers::provider::Provider;
-use fuel_core::service::Config;
 
-
-abigen!(TestFuelCoinContract, "test_projects/token_ops/out/debug/token_ops-abi.json");
+abigen!(
+    TestFuelCoinContract,
+    "test_projects/token_ops/out/debug/token_ops-abi.json"
+);
 
 #[tokio::test]
 async fn mint() {
@@ -15,20 +17,14 @@ async fn mint() {
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = TestFuelCoinContract::new(id.to_string(), client);
 
-    let c = testfuelcoincontract_mod::ContractId {
-        value: id.into(),
-    };
+    let c = testfuelcoincontract_mod::ContractId { value: id.into() };
 
     let balance_check_1 = ParamsGetBalance {
         target: id.into(),
         asset_id: c.clone(),
     };
 
-    let mut balance_result = instance
-        .get_balance(balance_check_1)
-        .call()
-        .await
-        .unwrap();
+    let mut balance_result = instance.get_balance(balance_check_1).call().await.unwrap();
 
     assert_eq!(balance_result.value, 0);
 
@@ -39,11 +35,7 @@ async fn mint() {
         asset_id: c.clone(),
     };
 
-    balance_result = instance
-        .get_balance(balance_check_2)
-        .call()
-        .await
-        .unwrap();
+    balance_result = instance.get_balance(balance_check_2).call().await.unwrap();
 
     assert_eq!(balance_result.value, 11);
 }
@@ -56,20 +48,14 @@ async fn burn() {
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = TestFuelCoinContract::new(id.to_string(), client);
 
-    let c = testfuelcoincontract_mod::ContractId {
-        value: id.into(),
-    };
+    let c = testfuelcoincontract_mod::ContractId { value: id.into() };
 
     let balance_check_1 = ParamsGetBalance {
         target: id.into(),
         asset_id: c.clone(),
     };
 
-    let mut balance_result = instance
-        .get_balance(balance_check_1)
-        .call()
-        .await
-        .unwrap();
+    let mut balance_result = instance.get_balance(balance_check_1).call().await.unwrap();
 
     assert_eq!(balance_result.value, 0);
 
@@ -81,11 +67,7 @@ async fn burn() {
         asset_id: c.clone(),
     };
 
-    balance_result = instance
-        .get_balance(balance_check_2)
-        .call()
-        .await
-        .unwrap();
+    balance_result = instance.get_balance(balance_check_2).call().await.unwrap();
 
     assert_eq!(balance_result.value, 4);
 }

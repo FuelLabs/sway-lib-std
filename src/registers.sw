@@ -2,7 +2,6 @@
 //! Ref: https://github.com/FuelLabs/fuel-specs/blob/master/specs/vm/main.md#semantics
 library registers;
 
-
 /// Contains overflow/underflow of addition, subtraction, and multiplication.
 pub fn overflow() -> u64 {
     asm() {

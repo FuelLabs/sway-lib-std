@@ -20,7 +20,6 @@ abi Registers {
 }
 
 impl Registers for Contract {
-
     fn get_overflow(gas_: u64, amount_: u64, color_: b256, input: ()) -> u64 {
         overflow()
     }

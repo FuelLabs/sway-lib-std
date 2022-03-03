@@ -1,6 +1,8 @@
 use fuel_tx::Salt;
 use fuels_abigen_macro::abigen;
 use fuels_contract::contract::Contract;
+use fuels_signers::provider::Provider;
+use fuel_core::service::Config;
 
 
 #[tokio::test]
@@ -8,8 +10,9 @@ async fn can_get_overflow() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_overflow()
@@ -25,8 +28,9 @@ async fn can_get_program_counter() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_program_counter()
@@ -42,8 +46,9 @@ async fn can_get_stack_start_ptr() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_stack_start_ptr()
@@ -59,8 +64,9 @@ async fn can_get_stack_ptr() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_stack_ptr()
@@ -76,8 +82,9 @@ async fn can_get_frame_ptr() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_frame_ptr()
@@ -93,8 +100,9 @@ async fn can_get_heap_ptr() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_heap_ptr()
@@ -110,8 +118,9 @@ async fn can_get_error() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_error()
@@ -127,8 +136,9 @@ async fn can_get_global_gas() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_global_gas()
@@ -144,8 +154,9 @@ async fn can_get_context_gas() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_context_gas()
@@ -161,8 +172,9 @@ async fn can_get_balance() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_balance()
@@ -178,8 +190,9 @@ async fn can_get_instrs_start() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_instrs_start()
@@ -195,8 +208,9 @@ async fn can_get_return_value() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_return_value()
@@ -212,8 +226,9 @@ async fn can_get_return_length() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_return_length()
@@ -229,8 +244,9 @@ async fn can_get_flags() {
     abigen!(TestFuelCoinContract, "test_projects/registers/out/debug/registers-abi.json",);
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/registers", salt).unwrap();
-    let (client, _id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let instance = TestFuelCoinContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = TestFuelCoinContract::new(id.to_string(), client);
 
     let result = instance
         .get_flags()

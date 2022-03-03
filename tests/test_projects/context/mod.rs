@@ -25,6 +25,7 @@ async fn get_contract_id() {
 }
 
 #[tokio::test]
+#[ignore]
 async fn get_this_balance() {
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/context", salt).unwrap();
@@ -43,6 +44,7 @@ async fn get_this_balance() {
 }
 
 #[tokio::test]
+#[ignore]
 async fn get_balance_of_contract() {
     abigen!(FuelCoin, "test_projects/token_ops/out/debug/token_ops-abi.json");
     let salt = Salt::from([0u8; 32]);

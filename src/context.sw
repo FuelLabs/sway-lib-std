@@ -4,7 +4,6 @@ library context;
 use ::contract_id::ContractId;
 dep call_frames;
 
-
 /// Get the current contracts balance of coin `asset_id`
 pub fn this_balance(asset_id: b256) -> u64 {
     asm(balance, token: asset_id) {

@@ -1,5 +1,4 @@
 script;
 
 fn main() {
-    
 }

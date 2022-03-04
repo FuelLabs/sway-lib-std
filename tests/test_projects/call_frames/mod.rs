@@ -1,5 +1,5 @@
 use fuel_core::service::Config;
-use fuel_tx::{Salt, ContractId};
+use fuel_tx::{ContractId, Salt};
 use fuels_abigen_macro::abigen;
 use fuels_contract::contract::Contract;
 use fuels_signers::provider::Provider;
@@ -23,11 +23,7 @@ async fn can_get_contract_id() {
     //     value: id.into(),
     // };
 
-    let result = instance
-        .get_id()
-        .call()
-        .await
-        .unwrap();
+    let result = instance.get_id().call().await.unwrap();
 
     let val: [u8; 32] = id.into();
     assert_eq!(result.value, val);
@@ -41,11 +37,7 @@ async fn can_get_msg_asset_id() {
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = CallFramesTestContract::new(id.to_string(), client);
 
-    let result = instance
-        .get_asset_id()
-        .call()
-        .await
-        .unwrap();
+    let result = instance.get_asset_id().call().await.unwrap();
 
     let val: [u8; 32] = id.into();
     assert_eq!(result.value, val);
@@ -59,11 +51,7 @@ async fn can_get_code_size() {
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = CallFramesTestContract::new(id.to_string(), client);
 
-    let result = instance
-        .get_code_size()
-        .call()
-        .await
-        .unwrap();
+    let result = instance.get_code_size().call().await.unwrap();
 
     assert_eq!(result.value, 1496);
 }
@@ -76,11 +64,7 @@ async fn can_get_first_param() {
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = CallFramesTestContract::new(id.to_string(), client);
 
-    let result = instance
-        .get_first_param()
-        .call()
-        .await
-        .unwrap();
+    let result = instance.get_first_param().call().await.unwrap();
 
     assert_eq!(result.value, 1504);
 }
@@ -93,11 +77,7 @@ async fn can_get_msg_second_param() {
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = CallFramesTestContract::new(id.to_string(), client);
 
-    let result = instance
-        .get_second_param()
-        .call()
-        .await
-        .unwrap();
+    let result = instance.get_second_param().call().await.unwrap();
 
     assert_eq!(result.value, 1512);
 }

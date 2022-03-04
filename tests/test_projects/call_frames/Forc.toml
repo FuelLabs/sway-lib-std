@@ -5,6 +5,6 @@ license = "Apache-2.0"
 name = "call_frames"
 
 [dependencies]
+call_frames_test_abi = { path = "../../test_artifacts/call_frames_test_abi" }
 core = { git = "http://github.com/FuelLabs/sway-lib-core" }
 std = { path = "../../../src" }
-call_frames_test_abi = { path = "../../test_artifacts/call_frames_test_abi"}

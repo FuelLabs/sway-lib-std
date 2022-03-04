@@ -29,7 +29,9 @@ pub fn msg_asset_id() -> ContractId {
 
 /// Get the code size in bytes (padded to word alignment) from the current call frame.
 pub fn code_size() -> u64 {
-    asm(size, ptr, offset: CODE_SIZE_OFFSET) {
+    // let offset = CODE_SIZE_OFFSET;
+   //               ^^^^^^^^^^^^^^^^ Internal compiler error: Unknown variable in assembly generation. This should have been an error during type checking.Please file an issue on the repository and include the code that triggered this error.
+    asm(size, ptr, offset: 576) {
         add size fp offset;
         size: u64
     }
@@ -37,7 +39,8 @@ pub fn code_size() -> u64 {
 
 /// Get the first parameter from the current call frame.
 pub fn first_param() -> u64 {
-    asm(size, ptr, offset: FIRST_PARAM_OFFSET) {
+    // let offset = FIRST_PARAM_OFFSET;
+    asm(size, ptr, offset: 584) {
         add size fp offset;
         size: u64
     }
@@ -45,7 +48,8 @@ pub fn first_param() -> u64 {
 
 /// Get the second parameter from the current call frame.
 pub fn second_param() -> u64 {
-    asm(size, ptr, offset: SECOND_PARAM_OFFSET) {
+    // let offset = SECOND_PARAM_OFFSET;
+    asm(size, ptr, offset: 592) {
         add size fp offset;
         size: u64
     }

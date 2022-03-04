@@ -30,7 +30,74 @@ async fn can_get_contract_id() {
         .unwrap();
     // println!("result: {:#?}", result);
 
-  // todo: log out the receipts on the fuels-rs side
 
     assert_eq!(result.value, c);
+}
+
+#[tokio::test]
+async fn can_get_msg_asset_id() {
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/call_frames", salt).unwrap();
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = CallFramesTestContract::new(id.to_string(), client);
+
+    let result = instance
+        .get_id()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, x);
+}
+
+#[tokio::test]
+async fn can_get_code_size() {
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/call_frames", salt).unwrap();
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = CallFramesTestContract::new(id.to_string(), client);
+
+    let result = instance
+        .get_id()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, x);
+}
+
+#[tokio::test]
+async fn can_get_first_param() {
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/call_frames", salt).unwrap();
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = CallFramesTestContract::new(id.to_string(), client);
+
+    let result = instance
+        .get_id()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, x);
+}
+
+#[tokio::test]
+async fn can_get_msg_second_param() {
+    let salt = Salt::from([0u8; 32]);
+    let compiled = Contract::compile_sway_contract("test_projects/call_frames", salt).unwrap();
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let instance = CallFramesTestContract::new(id.to_string(), client);
+
+    let result = instance
+        .get_id()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, x);
 }

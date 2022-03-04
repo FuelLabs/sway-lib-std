@@ -2,9 +2,8 @@
 authors = ["Fuel Labs <contact@fuel.sh>"]
 entry = "main.sw"
 license = "Apache-2.0"
-name = "call_frames"
+name = "call_frames_test_abi"
 
 [dependencies]
 core = { git = "http://github.com/FuelLabs/sway-lib-core" }
 std = { path = "../../../src" }
-call_frames_test_abi = { path = "../../test_artifacts/call_frames_test_abi"}

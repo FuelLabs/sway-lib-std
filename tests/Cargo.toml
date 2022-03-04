@@ -11,7 +11,7 @@ fuel-gql-client = { version = "0.3", default-features = false }
 fuel-tx = "0.5"
 fuel-types = "0.2"
 fuels-abigen-macro = "0.5"
-fuels-signers = { version = "0.5", features=["test-helpers"]}
+fuels-signers = { version = "0.5", features=["test-helpers"] }
 fuels-contract = "0.5"
 fuels-core = "0.5"
 rand = "0.8"

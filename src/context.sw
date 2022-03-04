@@ -3,11 +3,22 @@ library context;
 
 use ::contract_id::ContractId;
 dep call_frames;
+dep registers;
+
+/// Get the current contract's id when called in an internal context.
+/// **Note !** If called in an external context, this will **not** return a contract ID.
+// @dev If called externally, will actually return a pointer to the transaction ID.
+pub fn contract_id() -> ContractId {
+    ~ContractId::from(asm() {
+        fp: b256
+    })
+}
 
 /// Get the current contracts balance of coin `asset_id`
 pub fn this_balance(asset_id: b256) -> u64 {
-    asm(balance, token: asset_id) {
-        bal balance token fp;
+    let this_id = contract_id();
+    asm(balance, token: asset_id, contract_id: this_id) {
+        bal balance token contract_id;
         balance: u64
     }
 }

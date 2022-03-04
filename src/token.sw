@@ -35,7 +35,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
     // Transaction Script: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#transactionscript
     // Output types: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#output
     const OUTPUT_LENGTH_LOCATION = 56;
-    const OUTPUT_VARIABLE_TYPE = 4;
+    const OUTPUT_VARIABLE_TYPE = 4u8;
 
     // get length of outputs from TransactionScript outputsCount:
     let length: u8 = asm(outputs_length, outputs_length_ptr: OUTPUT_LENGTH_LOCATION) {

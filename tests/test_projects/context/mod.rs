@@ -4,29 +4,10 @@ use fuels_contract::contract::Contract;
 
 abigen!(TestContextContract, "test_projects/context/out/debug/context-abi.json",);
 
-#[tokio::test]
-async fn get_contract_id() {
-    let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::compile_sway_contract("test_projects/context", salt).unwrap();
-    let (client, context_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let context_instance = TestContextContract::new(compiled, client);
-
-    let c = testcontextcontract_mod::ContractId {
-        value: context_id.into(),
-    };
-
-    let result = context_instance
-        .get_id()
-        .call()
-        .await
-        .unwrap();
-
-    assert_eq!(result.value, c.value);
-}
 
 #[tokio::test]
 #[ignore]
-async fn get_this_balance() {
+async fn can_get_this_balance() {
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/context", salt).unwrap();
     let (client, context_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
@@ -45,7 +26,7 @@ async fn get_this_balance() {
 
 #[tokio::test]
 #[ignore]
-async fn get_balance_of_contract() {
+async fn can_get_balance_of_contract() {
     abigen!(FuelCoin, "test_projects/token_ops/out/debug/token_ops-abi.json");
     let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_projects/context", salt).unwrap();
@@ -79,22 +60,17 @@ async fn get_balance_of_contract() {
 }
 
 #[tokio::test]
-async fn get_msg_value() {
+async fn can_get_msg_value() {
     // create a new test_artifacts contract which can mint itself some coins and can call the context_contract
     // mint some FuelCoins, then call context_contract.msg_value() with some coins;
 }
 
 #[tokio::test]
-async fn get_msg_id() {
+async fn can_get_msg_id() {
     // mint some coins, then call context_contract.msg_id() with some coins;
 }
 
 #[tokio::test]
-async fn get_msg_gas() {
+async fn can_get_msg_gas() {
     // mint some coins, then call context_contract.msg_gas() with some coins;
-}
-
-#[tokio::test]
-async fn get_global_gas() {
-    // mint some coins, then call context_contract.global_gas() with some coins;
 }

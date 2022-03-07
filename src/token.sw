@@ -44,7 +44,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
     };
     // maintain a manual index as we only have `while` loops in sway atm:
     let mut index: u8 = 0u8;
-    let mut outputIndex = 0;
+    let mut output_index = 0;
     let mut output_found = false;
 
     // If an output of type `OutputVariable` is found, check if its `amount` is zero.
@@ -71,7 +71,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
             // && if the amount is zero:
             if amount == 0 {
                 // then store the index of the output and record the fact that we found a suitable output.
-                outputIndex = index;
+                output_index = index;
                 output_found = true;
                 // todo: use "break" keyword when it lands ( tracked here: https://github.com/FuelLabs/sway/issues/587 )
                 index = length; // break early and use the output we found

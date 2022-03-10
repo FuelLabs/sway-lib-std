@@ -14,21 +14,21 @@ pub fn contract_id() -> ContractId {
 }
 
 /// Retrieve the balance of asset 'asset_id' for the contract at 'contract_id'.
-pub fn balance(asset_id: b256, contract_id: b256) -> u64 {
-    asm(balance, token: asset_id, id: contract_id) {
+pub fn balance(asset_id: ContractId, contract_id: ContractId) -> u64 {
+    asm(balance, token: asset_id.value, id: contract_id.value) {
         bal balance token id;
         balance: u64
     }
 }
 
 /// Get the balance of coin `asset_id` for the current contract.
-pub fn this_balance(asset_id: b256) -> u64 {
+pub fn this_balance(asset_id: ContractId) -> u64 {
     balance(asset_id, contract_id())
 }
 
 /// Get the balance of coin `asset_id` for any contract `contract_id`.
-pub fn balance_of_contract(asset_id: b256, contract_id: ContractId) -> u64 {
-    balance(asset_id, contract_id.value)
+pub fn balance_of_contract(asset_id: ContractId, contract_id: ContractId) -> u64 {
+    balance(asset_id, contract_id)
 }
 
 /// Get the amount of units of `msg_asset_id()` being sent.

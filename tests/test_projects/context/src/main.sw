@@ -24,4 +24,8 @@ impl ContextTesting for Contract {
     fn get_gas(gas: u64, coins: u64, asset_id: b256, input: ()) -> u64 {
         gas()
     }
+
+    fn get_global_gas(gas: u64, coins: u64, asset_id: b256, input: ()) -> u64 {
+        global_gas()
+    }
 }

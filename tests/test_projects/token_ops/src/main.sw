@@ -1,6 +1,6 @@
 contract;
 
----------use std::{address::Address,contract_id::ContractId,token::*,context::balance_of_contract};
+use std::{address::Address, context::balance_of_contract, contract_id::ContractId, token::*};
 
 /// Parameters for `force_transfer` function.
 pub struct ParamsForceTransfer {
@@ -20,7 +20,6 @@ pub struct ParamsTransferToOutput {
 pub struct ParamsGetBalance {
     target: b256,
     asset_id: ContractId,
-    salt: u64, // temp, see:https://github.com/FuelLabs/fuels-rs/issues/89
 }
 
 abi TestFuelCoin {

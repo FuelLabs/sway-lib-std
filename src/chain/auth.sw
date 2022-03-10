@@ -1,9 +1,9 @@
 library auth;
 //! Functionality for determining who is calling an ABI method
 
-use ::result::Result;
 use ::address::Address;
 use ::contract_id::ContractId;
+use ::result::Result;
 
 pub enum AuthError {
     ContextError: (),
@@ -30,6 +30,7 @@ pub fn msg_sender() -> Result<Sender, AuthError> {
     if caller_is_external() {
         // TODO: Add call to get_coins_owner() here when implemented,
         Result::Err(AuthError::ContextError)
+
     } else {
         // Get caller's contract ID
         let id = ~ContractId::from(asm(r1) {

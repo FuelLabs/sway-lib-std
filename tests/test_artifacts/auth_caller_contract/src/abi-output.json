@@ -1,1 +1,0 @@
-[{"inputs":[{"components":null,"name":"gas_","type":"u64"},{"components":null,"name":"amount_","type":"u64"},{"components":null,"name":"color_","type":"b256"},{"components":null,"name":"value","type":"bool"}],"name":"call_auth_contract","outputs":[{"components":null,"name":"","type":"b256"}],"type":"function"}]

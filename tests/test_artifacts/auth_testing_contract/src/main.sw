@@ -7,12 +7,12 @@ use auth::AuthTesting;
 
 
 impl AuthTesting for Contract {
-    fn is_caller_external(gas_: u64, amount_: u64, color_: b256, value: bool) -> bool {
+    fn is_caller_external() -> bool {
         caller_is_external()
     }
 
     /// TODO: Fix return type, supposed to be a `Result`
-    fn returns_msg_sender(gas_: u64, amount_: u64, color_: b256, value: bool) -> ContractId {
+    fn returns_msg_sender() -> ContractId {
         msg_sender()
     }
 }

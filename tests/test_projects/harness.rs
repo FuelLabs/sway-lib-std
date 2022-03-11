@@ -1,2 +1,3 @@
-// Manually add tests to run here
+// Add test modules here:
+mod registers;
 mod token_ops;

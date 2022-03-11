@@ -74,20 +74,20 @@ async fn burn() {
 
 #[tokio::test]
 async fn force_transfer() {
-    let salt = get_new_salt();
+    let salt = Salt::from([0u8; 32]);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
 
     let compiled_fuelcoin =
     Contract::compile_sway_contract("test_projects/token_ops", salt).unwrap();
+    let fuelcoin_id = Contract::deploy(&compiled_fuelcoin, &client).await.unwrap();
+    let fuel_coin_instance = TestFuelCoinContract::new(fuelcoin_id.to_string(), client);
 
-    let compiled_balance_test =
+    let compiled_balance =
     Contract::compile_sway_contract("test_artifacts/balance_contract", salt).unwrap();
+    let balance_contract_id = Contract::deploy(&compiled_balance, &client).await.unwrap();
 
-    let (client, fuelcoin_id) = Contract::launch_and_deploy(&compiled_fuelcoin).await.unwrap();
-    let (_, balance_test_contract_id) = Contract::launch_and_deploy(&compiled_balance_test).await.unwrap();
     println!("Contract deployed @ {:x}", fuelcoin_id);
-    println!("Contract deployed @ {:x}", balance_test_contract_id);
-
-    let fuel_coin_instance = TestFuelCoinContract::new(compiled_fuelcoin, client);
+    println!("Contract deployed @ {:x}", balance_contract_id);
 
     let f = testfuelcoincontract_mod::ContractId {
         value: fuelcoin_id.into(),
@@ -134,7 +134,7 @@ async fn force_transfer() {
         .unwrap();
 
     let balance_check_3 = ParamsGetBalance {
-        target: balance_test_contract_id.into(),
+        target: balance_contract_id.into(),
         asset_id: f.clone(),
         salt: 3u64, // temp, see: https://github.com/FuelLabs/fuels-rs/issues/89
     };
@@ -145,15 +145,13 @@ async fn force_transfer() {
 
 #[tokio::test]
 async fn transfer_to_output() {
-    let salt = get_new_salt();
+    let salt = Salt::from([0u8; 32]);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
 
     let compiled_fuelcoin =
     Contract::compile_sway_contract("test_projects/token_ops", salt).unwrap();
-
-    let (client, fuelcoin_id) = Contract::launch_and_deploy(&compiled_fuelcoin).await.unwrap();
-    println!("Contract deployed @ {:x}", fuelcoin_id);
-
-    let fuel_coin_instance = TestFuelCoinContract::new(compiled_fuelcoin, client);
+    let fuelcoin_id = Contract::deploy(&compiled_fuelcoin, &client).await.unwrap();
+    let fuel_coin_instance = TestFuelCoinContract::new(fuelcoin_id.to_string(), client);
 
     let f = testfuelcoincontract_mod::ContractId {
         value: fuelcoin_id.into(),

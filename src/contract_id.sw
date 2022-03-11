@@ -6,7 +6,7 @@ pub struct ContractId {
     value: b256,
 }
 
-// @todo make this a generic trait. tracked here: https://github.com/FuelLabs/sway-lib-std/issues/58
+// TODO: make this a generic trait. tracked here: https://github.com/FuelLabs/sway-lib-std/issues/58
 pub trait From {
     fn from(b: b256) -> Self;
 } {

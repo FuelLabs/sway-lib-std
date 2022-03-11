@@ -10,20 +10,20 @@ use attacker_abi::Attacker;
 use target_abi::Target;
 
 impl Target for Contract {
-    fn can_be_reentered(gas_: u64, amount_: u64, color_: b256, input: ()) -> bool {
+    fn can_be_reentered() -> bool {
         let safe_from_reentry: bool = false;
         // let attacker_id = msg_sender();
         // let caller = abi(Attacker, attacker_id);
         // TEMP: use hardcoded attacker ContractID until Result type can be better utilized
         let caller = abi(Attacker, <ATTACKER_ID>);
         /// this call transfers control to the attacker contract, allowing it to execute arbitrary code.
-        caller.innocent_callback(1000, 0, ETH_ID, 42);
+        caller.innocent_callback(42);
 
         let was_reentered = is_reentrant();
         was_reentered
     }
 
-    fn reentrant_proof(gas_: u64, amount_: u64, color_: b256, input: ()) -> bool {
+    fn reentrant_proof() -> bool {
         let mut reentrant_proof = false;
         if is_reentrant() {
             reentrant_proof = true;
@@ -33,7 +33,7 @@ impl Target for Contract {
         // TEMP: use hardcoded attacker ContractID until Result type can be better utilized
         let caller = abi(Attacker, <ATTACKER_ID>);
         /// this call transfers control to the attacker contract, allowing it to execute arbitrary code.
-        caller.innocent_callback(1000, 0, ETH_ID, 42);
+        caller.innocent_callback(42);
         reentrant_proof
     }
 }

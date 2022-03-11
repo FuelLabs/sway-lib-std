@@ -6,4 +6,4 @@ name = "call_frames_test_abi"
 
 [dependencies]
 core = { git = "http://github.com/FuelLabs/sway-lib-core" }
-std = { path = "../../../src" }
+std = { path = "../../../" }

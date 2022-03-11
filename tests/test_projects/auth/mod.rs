@@ -1,20 +1,22 @@
 use fuel_tx::{Receipt, Salt, Transaction};
 use fuels_abigen_macro::abigen;
 use fuels_contract::{contract::Contract, script::Script};
-use rand::rngs::StdRng;
 use fuel_types::ContractId;
-use rand::{Rng, SeedableRng};
 use fuel_core::service::{Config, FuelService};
 use fuel_gql_client::client::FuelClient;
+use fuels_signers::provider::Provider;
 
+
+abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi.json");
+abigen!(AuthCallerContract, "test_artifacts/auth_caller_contract/src/json-abi-output.json");
 
 #[tokio::test]
 async fn is_external_from_internal() {
-    abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi.json");
-    let salt = new_salt();
+    let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
-    let (client, _auth_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let auth_instance = AuthContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let auth_instance = AuthContract::new(id.to_string(), client);
 
     let result = auth_instance
         .is_caller_external(true)
@@ -28,11 +30,11 @@ async fn is_external_from_internal() {
 #[tokio::test]
 #[should_panic]
 async fn is_external_from_external() {
-    abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi.json");
-    let salt = new_salt();
+    let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
-    let (client, _auth_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let auth_instance = AuthContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let auth_instance = AuthContract::new(id.to_string(), client);
 
     let result = auth_instance
         .is_caller_external(true)
@@ -45,11 +47,11 @@ async fn is_external_from_external() {
 
 #[tokio::test]
 async fn msg_sender_from_internal_sdk_call() {
-    abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi.json");
-    let salt = new_salt();
+    let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
-    let (client, _auth_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let auth_instance = AuthContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let id = Contract::deploy(&compiled, &client).await.unwrap();
+    let auth_instance = AuthContract::new(id.to_string(), client);
 
     // let zero_id = authcontract_mod::ContractId {
     //     value: [0u8; 32],
@@ -68,15 +70,15 @@ async fn msg_sender_from_internal_sdk_call() {
 #[tokio::test]
 async fn msg_sender_from_internal_contract() {
     // need to deploy 2 contracts !
-    abigen!(AuthCallerContract, "test_artifacts/auth_caller_contract/src/json-abi-output.json");
-    let salt = new_salt();
+    let salt = Salt::from([0u8; 32]);
     let compiled = Contract::compile_sway_contract("test_artifacts/auth_caller_contract", salt).unwrap();
-    let (client, auth_caller_id) = Contract::launch_and_deploy(&compiled).await.unwrap();
-    let auth_caller_instance = AuthCallerContract::new(compiled, client);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+    let auth_caller_id = Contract::deploy(&compiled, &client).await.unwrap();
+    let auth_caller_instance = AuthCallerContract::new(auth_caller_id.to_string(), client);
 
     let compiled_2 = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
-    let (_client, _auth_id) = Contract::launch_and_deploy(&compiled_2).await.unwrap();
-
+    let auth_id = Contract::deploy(&compiled_2, &client).await.unwrap();
+    let auth_instance = AuthContract::new(auth_id.to_string(), client);
 
     // let _zero_id = authcallercontract_mod::ContractId {
     //     value: auth_caller_id.into(),
@@ -97,13 +99,14 @@ async fn msg_sender_from_internal_contract() {
 
 #[tokio::test]
 async fn msg_sender_from_script() {
-    let client = setup_local_node().await;
+    let client = Provider::launch(Config::local_node()).await.unwrap();
     let compiled = Script::compile_sway_script("test_artifacts/auth_caller_script").unwrap();
 
     let tx = Transaction::Script {
         gas_price: 0,
         gas_limit: 1_000_000_000,
         maturity: 0,
+        byte_price: 0,
         receipts_root: Default::default(),
         script: compiled.raw, // Here we pass the compiled script into the transaction
         script_data: vec![],
@@ -127,16 +130,4 @@ async fn msg_sender_from_script() {
     };
 
     assert_eq!(expected_receipt, receipts[0]);
-}
-
-fn new_salt() -> Salt {
-    let rng = &mut StdRng::seed_from_u64(2321u64);
-    let salt: [u8; 32] = rng.gen();
-    let salt = Salt::from(salt);
-    salt
-}
-
-async fn setup_local_node() -> FuelClient {
-    let srv = FuelService::new_node(Config::local_node()).await.unwrap();
-    FuelClient::from(srv.bound_address)
 }

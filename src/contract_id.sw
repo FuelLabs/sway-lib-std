@@ -10,8 +10,8 @@ pub struct ContractId {
 pub trait From {
     fn from(b: b256) -> Self;
 } {
-    fn into(addr: ContractId) -> b256 {
-        addr.value
+    fn into(id: ContractId) -> b256 {
+        id.value
     }
 }
 

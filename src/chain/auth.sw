@@ -3,7 +3,7 @@
 //! This module exposes a variety of mechanisms for Authentication depending on the situation.
 library auth;
 
-use ::result::Result;
+
 use ::b512::B512;
 use ::address::Address;
 use ::ecr::ec_recover_address;
@@ -24,9 +24,10 @@ pub enum Sender {
 }
 
 /// Returns `true` if the caller is external (ie: a script or predicate).
+// ref: https://github.com/FuelLabs/fuel-specs/blob/master/specs/vm/opcodes.md#gm-get-metadata
 pub fn caller_is_external() -> bool {
-    asm(r1, r2: IS_CALLER_EXTERNAL) {
-        gm r1 r2;
+    asm(r1) {
+        gm r1 i1;
         r1: bool
     }
 }
@@ -44,18 +45,19 @@ pub fn get_signer(signature: B512, msg_hash: b256) -> Result<Address, AuthError>
 }
 
 /// Get the `Sender` (ie: `Address`| ContractId) from which a call was made.
-/// Returns a Result::Ok(Sender) or Result::Error.
-// NOTE: Currently only returns Result::Ok variant if the parent context is Internal.
-pub fn msg_sender() -> Result<Sender, AuthError> {
+/// TODO: Return a Result::Ok(Sender) or Result::Error.
+pub fn msg_sender() -> b256 {
     if caller_is_external() {
         // TODO: Add call to get_coins_owner() here when implemented,
-        Result::Err(AuthError::ContextError)
+        // Result::Err(AuthError::ContextError)
+        0x0000000000000000000000000000000000000000000000000000000000000000
     } else {
         // Get caller's contract ID
-        let id = ~ContractId::from(asm(r1, r2: GET_CALLER) {
-            gm r1 r2;
+        let id = ~ContractId::from(asm(r1) {
+            gm r1 i2;
             r1: b256
         });
-        Result::Ok(Sender::Id(id))
+        // Result::Ok(Sender::Id(id))
+        id.value
     }
 }

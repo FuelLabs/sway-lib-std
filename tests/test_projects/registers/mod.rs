@@ -32,7 +32,7 @@ async fn can_get_program_counter() {
 
     let result = instance.get_program_counter().call().await.unwrap();
 
-    assert_eq!(result.value, 1760);
+    assert_eq!(result.value, 1728);
 }
 
 #[tokio::test]
@@ -45,7 +45,7 @@ async fn can_get_stack_start_ptr() {
 
     let result = instance.get_stack_start_ptr().call().await.unwrap();
 
-    assert_eq!(result.value, 2176);
+    assert_eq!(result.value, 1952);
 }
 
 #[tokio::test]
@@ -58,7 +58,7 @@ async fn can_get_stack_ptr() {
 
     let result = instance.get_stack_ptr().call().await.unwrap();
 
-    assert_eq!(result.value, 2176);
+    assert_eq!(result.value, 1952);
 }
 
 #[tokio::test]
@@ -110,7 +110,7 @@ async fn can_get_global_gas() {
 
     let result = instance.get_global_gas().call().await.unwrap();
 
-    assert_eq!(result.value, 999666);
+    assert_eq!(result.value, 999710);
 }
 
 #[tokio::test]

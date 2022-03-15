@@ -12,7 +12,7 @@ abigen!(
 #[tokio::test]
 async fn mint() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::load_sway_contract("test_projects/token_ops/out/debug/token_ops-abi.json", salt).unwrap();
+    let compiled = Contract::load_sway_contract("test_projects/token_ops/out/debug/token_ops.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = TestFuelCoinContract::new(id.to_string(), client);
@@ -32,7 +32,7 @@ async fn mint() {
 #[tokio::test]
 async fn burn() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::load_sway_contract("test_projects/token_ops/out/debug/token_ops-abi.json", salt).unwrap();
+    let compiled = Contract::load_sway_contract("test_projects/token_ops/out/debug/token_ops.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = TestFuelCoinContract::new(id.to_string(), client);

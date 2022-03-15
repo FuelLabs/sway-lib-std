@@ -21,11 +21,10 @@ async fn can_get_this_balance() {
     let caller_id = Contract::deploy(&compiled_2, &client).await.unwrap();
     let caller_instance = TestContextCallerContract::new(caller_id.to_string(), client);
 
-    let context_contract_id: [u8; 32] = context_id.into();
     let send_amount = 42;
 
-    let ctx = testcontextcontract_mod::ContractId { value: context_contract_id.into() };
-    let ctx2 = testcontextcallercontract_mod::ContractId { value: context_contract_id.into() };
+    let ctx = testcontextcontract_mod::ContractId { value: context_id.into() };
+    let ctx2 = testcontextcallercontract_mod::ContractId { value: context_id.into() };
 
     caller_instance.call_get_this_balance_with_coins(send_amount, ctx2).set_contracts(&[context_id]).call().await.unwrap();
 

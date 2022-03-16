@@ -35,7 +35,7 @@ impl ContextCaller for Contract {
         context_contract.get_balance_of_contract{
             coins: send_amount,
             asset_id: ~ContractId::into(contract_id()),
-        }(context_id, context_id)
+        }(contract_id(), context_id)
     }
 
     fn call_get_amount_with_coins(send_amount: u64, context_id: ContractId) -> u64 {

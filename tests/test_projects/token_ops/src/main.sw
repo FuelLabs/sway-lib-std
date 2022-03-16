@@ -28,6 +28,6 @@ impl TestFuelCoin for Contract {
     }
 
     fn get_balance(asset_id: ContractId, target: ContractId) -> u64 {
-        balance_of_contract(target, asset_id)
+        balance_of_contract(asset_id, target)
     }
 }

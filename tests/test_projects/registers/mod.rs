@@ -1,9 +1,9 @@
 use fuel_core::service::Config;
 use fuel_tx::Salt;
+use fuel_vm::consts::VM_MAX_RAM;
 use fuels_abigen_macro::abigen;
 use fuels_contract::contract::Contract;
 use fuels_signers::provider::Provider;
-use fuel_vm::consts::VM_MAX_RAM;
 
 abigen!(
     TestFuelCoinContract,
@@ -221,9 +221,9 @@ async fn can_get_flags() {
 }
 
 fn is_within_range(n: u64) -> bool {
-   if n <= 0 || n > VM_MAX_RAM {
-       false
-   } else {
-       true
-   }
+    if n <= 0 || n > VM_MAX_RAM {
+        false
+    } else {
+        true
+    }
 }

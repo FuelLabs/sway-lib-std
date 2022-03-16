@@ -43,7 +43,6 @@ async fn can_get_balance_of_contract() {
     let compiled = Contract::load_sway_contract("test_projects/context/out/debug/context.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let context_id = Contract::deploy(&compiled, &client).await.unwrap();
-    let context_instance = TestContextContract::new(context_id.to_string(), client.clone());
 
     let compiled_2 = Contract::load_sway_contract("test_artifacts/context_caller_contract/out/debug/context_caller_contract.bin", salt).unwrap();
     let caller_id = Contract::deploy(&compiled_2, &client).await.unwrap();
@@ -52,14 +51,21 @@ async fn can_get_balance_of_contract() {
 
     caller_instance.mint_coins(amount).call().await.unwrap();
 
-    let asset_id = testcontextcontract_mod::ContractId { value: caller_id.into() };
+    let target = testcontextcallercontract_mod::ContractId { value: context_id.into() };
 
-    let result = context_instance
-        .get_balance_of_contract(asset_id.clone(), asset_id.clone())
-        .set_contracts(&[context_id, caller_id])
+    let result = caller_instance
+        .call_get_balance_of_contract_with_coins(amount, target)
+        .set_contracts(&[context_id])
         .call()
         .await
         .unwrap();
+
+    // let result = context_instance
+    //     .get_balance_of_contract(asset_id.clone(), asset_id.clone())
+    //     .set_contracts(&[context_id, caller_id])
+    //     .call()
+    //     .await
+    //     .unwrap();
 
     assert_eq!(result.value, 42);
 }

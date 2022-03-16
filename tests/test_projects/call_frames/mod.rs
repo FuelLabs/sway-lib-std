@@ -12,41 +12,43 @@ abigen!(
 #[tokio::test]
 async fn can_get_contract_id() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::compile_sway_contract("test_projects/call_frames", salt).unwrap();
+    let compiled = Contract::load_sway_contract("test_projects/call_frames/out/debug/call_frames.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = CallFramesTestContract::new(id.to_string(), client);
 
     println!("Contract deployed at: {:#?}", id);
 
-    // let c = callframestestcontract_mod::ContractId {
-    //     value: id.into(),
-    // };
+    let c = callframestestcontract_mod::ContractId {
+        value: id.into(),
+    };
 
     let result = instance.get_id().call().await.unwrap();
 
-    let val: [u8; 32] = id.into();
-    assert_eq!(result.value, val);
+    assert_eq!(result.value, c);
 }
 
 #[tokio::test]
 async fn can_get_msg_asset_id() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::compile_sway_contract("test_projects/call_frames", salt).unwrap();
+    let compiled = Contract::load_sway_contract("test_projects/call_frames/out/debug/call_frames.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = CallFramesTestContract::new(id.to_string(), client);
 
+    let c = callframestestcontract_mod::ContractId {
+        value: id.into(),
+    };
+
     let result = instance.get_asset_id().call().await.unwrap();
 
-    let val: [u8; 32] = id.into();
-    assert_eq!(result.value, val);
+    assert_eq!(result.value, c);
 }
 
 #[tokio::test]
 async fn can_get_code_size() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::compile_sway_contract("test_projects/call_frames", salt).unwrap();
+    let compiled = Contract::load_sway_contract("test_projects/call_frames/out/debug/call_frames.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = CallFramesTestContract::new(id.to_string(), client);
@@ -59,7 +61,7 @@ async fn can_get_code_size() {
 #[tokio::test]
 async fn can_get_first_param() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::compile_sway_contract("test_projects/call_frames", salt).unwrap();
+    let compiled = Contract::load_sway_contract("test_projects/call_frames/out/debug/call_frames.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = CallFramesTestContract::new(id.to_string(), client);
@@ -72,7 +74,7 @@ async fn can_get_first_param() {
 #[tokio::test]
 async fn can_get_msg_second_param() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::compile_sway_contract("test_projects/call_frames", salt).unwrap();
+    let compiled = Contract::load_sway_contract("test_projects/call_frames/out/debug/call_frames.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = CallFramesTestContract::new(id.to_string(), client);

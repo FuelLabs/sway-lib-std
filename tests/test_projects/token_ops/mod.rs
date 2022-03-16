@@ -12,7 +12,9 @@ abigen!(
 #[tokio::test]
 async fn mint() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::load_sway_contract("test_projects/token_ops/out/debug/token_ops.bin", salt).unwrap();
+    let compiled =
+        Contract::load_sway_contract("test_projects/token_ops/out/debug/token_ops.bin", salt)
+            .unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = TestFuelCoinContract::new(id.to_string(), client);
@@ -20,7 +22,11 @@ async fn mint() {
     let target = testfuelcoincontract_mod::ContractId { value: id.into() };
     let asset_id = testfuelcoincontract_mod::ContractId { value: id.into() };
 
-    let mut balance_result = instance.get_balance(target.clone(), asset_id.clone()).call().await.unwrap();
+    let mut balance_result = instance
+        .get_balance(target.clone(), asset_id.clone())
+        .call()
+        .await
+        .unwrap();
     assert_eq!(balance_result.value, 0);
 
     instance.mint_coins(11).call().await.unwrap();
@@ -32,7 +38,9 @@ async fn mint() {
 #[tokio::test]
 async fn burn() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::load_sway_contract("test_projects/token_ops/out/debug/token_ops.bin", salt).unwrap();
+    let compiled =
+        Contract::load_sway_contract("test_projects/token_ops/out/debug/token_ops.bin", salt)
+            .unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let instance = TestFuelCoinContract::new(id.to_string(), client);
@@ -40,7 +48,11 @@ async fn burn() {
     let target = testfuelcoincontract_mod::ContractId { value: id.into() };
     let asset_id = testfuelcoincontract_mod::ContractId { value: id.into() };
 
-    let mut balance_result = instance.get_balance(target.clone(), asset_id.clone()).call().await.unwrap();
+    let mut balance_result = instance
+        .get_balance(target.clone(), asset_id.clone())
+        .call()
+        .await
+        .unwrap();
     assert_eq!(balance_result.value, 0);
 
     instance.mint_coins(11).call().await.unwrap();

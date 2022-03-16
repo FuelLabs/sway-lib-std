@@ -7,13 +7,13 @@ use fuel_gql_client::client::FuelClient;
 use fuels_signers::provider::Provider;
 
 
-abigen!(AuthContract, "test_artifacts/auth_testing_contract/src/abi.json");
-abigen!(AuthCallerContract, "test_artifacts/auth_caller_contract/src/json-abi-output.json");
+abigen!(AuthContract, "test_artifacts/auth_testing_contract/out/debug/auth_testing_contract-abi.json");
+abigen!(AuthCallerContract, "test_artifacts/auth_caller_contract/out/debug/auth_caller_contract-abi.json");
 
 #[tokio::test]
 async fn is_external_from_internal() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
+    let compiled = Contract::load_sway_contract("test_artifacts/auth_testing_contract/out/debug/auth_testing_contract.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let auth_instance = AuthContract::new(id.to_string(), client);
@@ -31,7 +31,7 @@ async fn is_external_from_internal() {
 #[should_panic]
 async fn is_external_from_external() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
+    let compiled = Contract::load_sway_contract("test_artifacts/auth_testing_contract/out/debug/auth_testing_contract.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let auth_instance = AuthContract::new(id.to_string(), client);
@@ -48,7 +48,7 @@ async fn is_external_from_external() {
 #[tokio::test]
 async fn msg_sender_from_internal_sdk_call() {
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
+    let compiled = Contract::load_sway_contract("test_artifacts/auth_testing_contract/out/debug/auth_testing_contract.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let id = Contract::deploy(&compiled, &client).await.unwrap();
     let auth_instance = AuthContract::new(id.to_string(), client);
@@ -71,12 +71,12 @@ async fn msg_sender_from_internal_sdk_call() {
 async fn msg_sender_from_internal_contract() {
     // need to deploy 2 contracts !
     let salt = Salt::from([0u8; 32]);
-    let compiled = Contract::compile_sway_contract("test_artifacts/auth_caller_contract", salt).unwrap();
+    let compiled = Contract::load_sway_contract("test_artifacts/auth_caller_contract/out/debug/auth_caller_contract.bin", salt).unwrap();
     let client = Provider::launch(Config::local_node()).await.unwrap();
     let auth_caller_id = Contract::deploy(&compiled, &client).await.unwrap();
     let auth_caller_instance = AuthCallerContract::new(auth_caller_id.to_string(), client);
 
-    let compiled_2 = Contract::compile_sway_contract("test_artifacts/auth_testing_contract", salt).unwrap();
+    let compiled_2 = Contract::load_sway_contract("test_artifacts/auth_testing_contract/out/debug/auth_testing_contract.bin", salt).unwrap();
     let auth_id = Contract::deploy(&compiled_2, &client).await.unwrap();
     let auth_instance = AuthContract::new(auth_id.to_string(), client);
 

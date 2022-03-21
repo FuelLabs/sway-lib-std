@@ -8,7 +8,6 @@ pub struct ContractId {
 
 impl core::ops::Eq for ContractId {
     fn eq(self, other: Self) -> bool {
-        // An `Address` in Sway is 32 bytes
         asm(r1: self, r2: other, result, bytes_to_compare: 32) {
             meq result r1 r2 bytes_to_compare;
             result: bool

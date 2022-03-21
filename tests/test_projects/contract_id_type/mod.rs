@@ -14,7 +14,7 @@ async fn contract_id_eq_implementation() {
 
     let tx = Transaction::Script {
         gas_price: 0,
-        gas_limit: 1_000_000_000,
+        gas_limit: 1_000_000,
         maturity: 0,
         byte_price: 0,
         receipts_root: Default::default(),
@@ -33,7 +33,7 @@ async fn contract_id_eq_implementation() {
         id: ContractId::new([0u8; 32]),
         val: 1,
         pc: receipts[0].pc().unwrap(),
-        is: 464,
+        is: 472,
     };
 
     assert_eq!(expected_receipt, receipts[0]);

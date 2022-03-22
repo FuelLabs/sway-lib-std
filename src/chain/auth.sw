@@ -1,12 +1,22 @@
+//! Functionality for determining who is calling an ABI method.
+//! As transactions in the UTXO model don't have a concept of "sender", a single Authentication mechanism won't work for all use-cases.
+//! This module exposes a variety of mechanisms for Authentication depending on the situation.
 library auth;
-//! Functionality for determining who is calling an ABI method
 
+
+use ::b512::B512;
 use ::address::Address;
+use ::ecr::ec_recover_address;
 use ::contract_id::ContractId;
 
 pub enum AuthError {
     ContextError: (),
+    EcRecoverError: (),
 }
+
+// TODO: use an enum instead of loose contants for these once match statements work with enum. tracked here: https://github.com/FuelLabs/sway/issues/579
+const IS_CALLER_EXTERNAL = 1;
+const GET_CALLER = 2;
 
 pub enum Sender {
     Address: Address,
@@ -19,6 +29,18 @@ pub fn caller_is_external() -> bool {
     asm(r1) {
         gm r1 i1;
         r1: bool
+    }
+}
+
+/// A wrapper for ec-recover_address which is aware of the parent context and returns the appropriate result accordingly.
+/// Returns Result::Error(ContextError) if the parent context is internal, otherwise returns a Result::Ok(Address) or Result::Error(EcRecoverError)
+pub fn get_signer(signature: B512, msg_hash: b256) -> Result<Address, AuthError> {
+   if !caller_is_external() {
+        Result::Err(AuthError::ContextError)
+    } else {
+        let addr = ec_recover_address(signature, msg_hash);
+        // TODO: refactor ec_recover functions to return Result
+        Result::Ok(addr)
     }
 }
 

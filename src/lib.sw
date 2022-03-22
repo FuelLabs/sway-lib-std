@@ -7,11 +7,11 @@ dep storage;
 dep b512;
 dep address;
 dep contract_id;
+dep ecr;
 dep chain;
 dep context;
 dep math;
 dep block;
 dep token;
-dep ecr;
 
 use core::*;

@@ -26,6 +26,7 @@ async fn run_valid() {
     let receipts = script.call(&client).await.unwrap();
 
     if let Receipt::Return { .. } = receipts[0] {
-        assert!(false);
+    } else {
+        assert!(false)
     }
 }

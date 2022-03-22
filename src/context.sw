@@ -7,7 +7,6 @@ use ::call_frames::*;
 dep context/call_frames;
 dep context/registers;
 
-
 /// Get the current contracts balance of coin `asset_id`
 pub fn this_balance(asset_id: ContractId) -> u64 {
     let this_id = contract_id();

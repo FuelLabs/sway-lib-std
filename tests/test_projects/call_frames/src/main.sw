@@ -5,7 +5,6 @@ use call_frames_test_abi::CallFramesTest;
 use std::context::call_frames::*;
 
 impl CallFramesTest for Contract {
-
     fn get_id() -> ContractId {
         contract_id()
     }
@@ -25,5 +24,4 @@ impl CallFramesTest for Contract {
     fn get_second_param() -> u64 {
         second_param()
     }
-
 }

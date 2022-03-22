@@ -22,25 +22,26 @@ pub enum Result<T, E> {
 /////////////////////////////////////////////////////////////////////////////
 
 impl Result<T, E> {
-    /////////////////////////////////////////////////////////////////////////
-    // Querying the contained values
-    /////////////////////////////////////////////////////////////////////////
+}
 
-    /// Returns `true` if the result is [`Ok`].
-    fn is_ok(self) -> bool {
-        if let Result::Ok(t) = self {
-            true
-        } else {
-            false
-        }
+/////////////////////////////////////////////////////////////////////////
+// Querying the contained values
+/////////////////////////////////////////////////////////////////////////
+
+/// Returns `true` if the result is [`Ok`].
+pub fn result_is_ok(r: Result) -> bool {
+    if let Result::Ok(t) = r {
+        true
+    } else {
+        false
     }
+}
 
-    /// Returns `true` if the result is [`Err`].
-    fn is_err(self) -> bool {
-        if let Result::Ok(t) = self {
-            false
-        } else {
-            true
-        }
+/// Returns `true` if the result is [`Err`].
+pub fn result_is_err(r: Result) -> bool {
+    if let Result::Ok(t) = r {
+        false
+    } else {
+        true
     }
 }

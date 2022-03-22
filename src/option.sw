@@ -21,25 +21,26 @@ pub enum Option<T> {
 /////////////////////////////////////////////////////////////////////////////
 
 impl Option<T> {
-    /////////////////////////////////////////////////////////////////////////
-    // Querying the contained values
-    /////////////////////////////////////////////////////////////////////////
+}
 
-    /// Returns `true` if the result is [`Some`].
-    fn is_some(self) -> bool {
-        if let Option::Some(t) = self {
-            true
-        } else {
-            false
-        }
+/////////////////////////////////////////////////////////////////////////
+// Querying the contained values
+/////////////////////////////////////////////////////////////////////////
+
+/// Returns `true` if the result is [`Some`].
+pub fn option_is_some(o: Option) -> bool {
+    if let Option::Some(t) = o {
+        true
+    } else {
+        false
     }
+}
 
-    /// Returns `true` if the result is [`None`].
-    fn is_none(self) -> bool {
-        if let Option::Some(t) = self {
-            false
-        } else {
-            true
-        }
+/// Returns `true` if the result is [`None`].
+pub fn option_is_none(o: Option) -> bool {
+    if let Option::Some(t) = o {
+        false
+    } else {
+        true
     }
 }

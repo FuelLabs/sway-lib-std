@@ -3,7 +3,6 @@
 /// https://github.com/FuelLabs/fuel-specs/blob/master/specs/vm/main.md#call-frames
 library call_frames;
 
-use ::constants::{CALL_FRAME_OFFSET, CODE_SIZE_OFFSET, FIRST_PARAM_OFFSET, SAVED_REGISTERS_OFFSET, SECOND_PARAM_OFFSET};
 use ::contract_id::ContractId;
 
 ///////////////////////////////////////////////////////////

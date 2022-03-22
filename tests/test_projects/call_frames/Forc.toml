@@ -6,5 +6,4 @@ name = "call_frames"
 
 [dependencies]
 call_frames_test_abi = { path = "../../test_artifacts/call_frames_test_abi" }
-core = { git = "http://github.com/FuelLabs/sway-lib-core" }
 std = { path = "../../../" }

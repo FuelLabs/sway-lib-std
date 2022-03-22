@@ -18,8 +18,8 @@ pub fn this_balance(asset_id: ContractId) -> u64 {
 }
 
 /// Get the balance of coin `asset_id` for any contract `contract_id`
-pub fn balance_of_contract(asset_id: ContractId, contract_id: ContractId) -> u64 {
-    asm(balance, token: asset_id.value, contract: contract_id.value) {
+pub fn balance_of_contract(asset_id: ContractId, ctr_id: ContractId) -> u64 {
+    asm(balance, token: asset_id.value, contract: ctr_id.value) {
         bal balance token contract;
         balance: u64
     }

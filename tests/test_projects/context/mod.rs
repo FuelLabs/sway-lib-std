@@ -22,6 +22,7 @@ abigen!(
     "test_projects/token_ops/out/debug/token_ops-abi.json"
 );
 
+
 async fn get_context_instance() -> (
     TestContextContract,
     ContractId,
@@ -80,8 +81,8 @@ async fn get_caller_instance() -> (
 async fn can_get_this_balance() {
     let (context_instance, context_id, context_sway_id) = get_context_instance().await;
     let (caller_instance, caller_id, caller_sway_id) = get_caller_instance().await;
-
     let send_amount = 42;
+
     caller_instance
         .call_get_this_balance_with_coins(send_amount, caller_sway_id)
         .set_contracts(&[context_id])

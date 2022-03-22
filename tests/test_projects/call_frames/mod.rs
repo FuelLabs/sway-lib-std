@@ -1,7 +1,7 @@
 use fuel_tx::{ContractId, Salt};
-use fuels_abigen_macro::abigen;
 use fuel_vm::consts::VM_MAX_RAM;
-use fuels_contract::{parameters::TxParameters, contract::Contract};
+use fuels_abigen_macro::abigen;
+use fuels_contract::{contract::Contract, parameters::TxParameters};
 use fuels_signers::util::test_helpers;
 
 abigen!(
@@ -10,14 +10,15 @@ abigen!(
 );
 
 async fn get_call_frames_instance() -> (CallFramesTestContract, ContractId) {
-
     let salt = Salt::from([0u8; 32]);
     let compiled =
         Contract::load_sway_contract("test_projects/call_frames/out/debug/call_frames.bin", salt)
             .unwrap();
     // let server = FuelService::new_node(Config::local_node()).await.unwrap();
     let (provider, wallet) = test_helpers::setup_test_provider_and_wallet().await;
-    let id = Contract::deploy(&compiled, &provider, &wallet, TxParameters::default()).await.unwrap();
+    let id = Contract::deploy(&compiled, &provider, &wallet, TxParameters::default())
+        .await
+        .unwrap();
     let instance = CallFramesTestContract::new(id.to_string(), provider, wallet);
 
     (instance, id)
@@ -27,9 +28,7 @@ async fn get_call_frames_instance() -> (CallFramesTestContract, ContractId) {
 async fn can_get_contract_id() {
     let (instance, id) = get_call_frames_instance().await;
 
-    let c = callframestestcontract_mod::ContractId {
-        value: id.into(),
-    };
+    let c = callframestestcontract_mod::ContractId { value: id.into() };
 
     let result = instance.get_id().call().await.unwrap();
 
@@ -40,9 +39,7 @@ async fn can_get_contract_id() {
 async fn can_get_msg_asset_id() {
     let (instance, id) = get_call_frames_instance().await;
 
-    let c = callframestestcontract_mod::ContractId {
-        value: id.into(),
-    };
+    let c = callframestestcontract_mod::ContractId { value: id.into() };
 
     let result = instance.get_asset_id().call().await.unwrap();
 

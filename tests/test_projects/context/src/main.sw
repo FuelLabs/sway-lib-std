@@ -1,8 +1,6 @@
 contract;
 
-use std::context::call_frames::*;
-use std::context::registers::*;
-use std::context::*;
+use std::context::{call_frames::*, registers::*, *};
 use context_testing_abi::*;
 use std::contract_id::ContractId;
 

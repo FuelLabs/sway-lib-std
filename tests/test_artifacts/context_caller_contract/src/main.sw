@@ -1,7 +1,7 @@
 contract;
 
 use context_testing_abi::ContextTesting;
-use std::context::contract_id;
+use std::context::call_frames::contract_id;
 use std::token::mint;
 use std::contract_id::ContractId;
 

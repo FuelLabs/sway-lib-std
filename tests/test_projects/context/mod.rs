@@ -156,7 +156,7 @@ async fn can_get_msg_id() {
 
 #[tokio::test]
 async fn can_get_msg_gas() {
-    let (_context_instance, context_id) = get_context_instance().await;
+    let (_, context_id) = get_context_instance().await;
     let (caller_instance, caller_id) = get_caller_instance().await;
     let send_amount = 11;
     let caller_sway_id = testcontextcallercontract_mod::ContractId {
@@ -164,7 +164,7 @@ async fn can_get_msg_gas() {
     };
 
     let result = caller_instance
-        .call_get_amount_with_coins(send_amount, caller_sway_id)
+        .call_get_gas_with_coins(send_amount, caller_sway_id)
         .set_contracts(&[context_id])
         .call()
         .await
@@ -183,7 +183,7 @@ async fn can_get_global_gas() {
     };
 
     let result = caller_instance
-        .call_get_amount_with_coins(send_amount, caller_sway_id)
+        .call_get_global_gas_with_coins(send_amount, caller_sway_id)
         .set_contracts(&[context_id])
         .call()
         .await

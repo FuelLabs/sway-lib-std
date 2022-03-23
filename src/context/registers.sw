@@ -65,8 +65,8 @@ pub fn context_gas() -> u64 {
     }
 }
 
-/// Received balance for this context.
-pub fn balance() -> u64 {
+/// Get the amount of units of `call_frames::msg_asset_id()` being sent.
+pub fn msg_amount() -> u64 {
     asm() {
         bal
     }

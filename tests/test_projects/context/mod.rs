@@ -22,7 +22,6 @@ abigen!(
 async fn get_context_instance() -> (
     TestContextContract,
     ContractId,
-    testcontextcontract_mod::ContractId,
 ) {
     let salt = Salt::from([0u8; 32]);
     let compiled =
@@ -34,17 +33,13 @@ async fn get_context_instance() -> (
         .unwrap();
     let instance =
         TestContextContract::new(contract_id.to_string(), provider.clone(), wallet.clone());
-    let sway_id = testcontextcontract_mod::ContractId {
-        value: contract_id.into(),
-    };
 
-    (instance, contract_id, sway_id)
+    (instance, contract_id)
 }
 
 async fn get_caller_instance() -> (
     TestContextCallerContract,
     ContractId,
-    testcontextcallercontract_mod::ContractId,
 ) {
     let salt = Salt::from([0u8; 32]);
     let (provider, wallet) = setup_test_provider_and_wallet().await;
@@ -58,17 +53,14 @@ async fn get_caller_instance() -> (
         .await
         .unwrap();
     let instance = TestContextCallerContract::new(contract_id.to_string(), provider, wallet);
-    let sway_id = testcontextcallercontract_mod::ContractId {
-        value: contract_id.into(),
-    };
 
-    (instance, contract_id, sway_id)
+    (instance, contract_id)
 }
 
 #[tokio::test]
 async fn can_get_this_balance() {
-    let (context_instance, context_id, _) = get_context_instance().await;
-    let (caller_instance, caller_id, _) = get_caller_instance().await;
+    let (context_instance, context_id) = get_context_instance().await;
+    let (caller_instance, caller_id) = get_caller_instance().await;
     let send_amount = 42;
 
     let context_sway_id = testcontextcallercontract_mod::ContractId {
@@ -99,12 +91,14 @@ async fn can_get_this_balance() {
 
 #[tokio::test]
 async fn can_get_balance_of_contract() {
-    let (_context_instance, context_id, _context_sway_id) = get_context_instance().await;
-    let (caller_instance, _caller_id, caller_sway_id) = get_caller_instance().await;
+    let (_context_instance, context_id) = get_context_instance().await;
+    let (caller_instance, caller_id) = get_caller_instance().await;
 
     let amount = 42;
     caller_instance.mint_coins(amount).call().await.unwrap();
-    let target = caller_sway_id;
+    let target = testcontextcallercontract_mod::ContractId {
+        value: caller_id.into(),
+    };
 
     let result = caller_instance
         .call_get_balance_of_contract_with_coins(amount, target)
@@ -125,8 +119,8 @@ async fn can_get_balance_of_contract() {
 
 #[tokio::test]
 async fn can_get_msg_value() {
-    let (_context_instance, context_id, _) = get_context_instance().await;
-    let (caller_instance, _caller_id, _) = get_caller_instance().await;
+    let (_context_instance, context_id) = get_context_instance().await;
+    let (caller_instance, _caller_id) = get_caller_instance().await;
     let send_amount = 11;
 
     let context_sway_id = testcontextcallercontract_mod::ContractId {
@@ -144,9 +138,12 @@ async fn can_get_msg_value() {
 
 #[tokio::test]
 async fn can_get_msg_id() {
-    let (_context_instance, context_id, _context_sway_id) = get_context_instance().await;
-    let (caller_instance, _caller_id, caller_sway_id) = get_caller_instance().await;
+    let (_context_instance, context_id) = get_context_instance().await;
+    let (caller_instance, caller_id) = get_caller_instance().await;
     let send_amount = 42;
+    let caller_sway_id = testcontextcallercontract_mod::ContractId {
+        value: caller_id.into(),
+    };
 
     let result = caller_instance
         .call_get_asset_id_with_coins(send_amount, caller_sway_id.clone())
@@ -159,9 +156,12 @@ async fn can_get_msg_id() {
 
 #[tokio::test]
 async fn can_get_msg_gas() {
-    let (_context_instance, context_id, _context_sway_id) = get_context_instance().await;
-    let (caller_instance, _caller_id, caller_sway_id) = get_caller_instance().await;
+    let (_context_instance, context_id) = get_context_instance().await;
+    let (caller_instance, caller_id) = get_caller_instance().await;
     let send_amount = 11;
+    let caller_sway_id = testcontextcallercontract_mod::ContractId {
+        value: caller_id.into(),
+    };
 
     let result = caller_instance
         .call_get_amount_with_coins(send_amount, caller_sway_id)
@@ -175,9 +175,12 @@ async fn can_get_msg_gas() {
 
 #[tokio::test]
 async fn can_get_global_gas() {
-    let (_context_instance, context_id, _context_sway_id) = get_context_instance().await;
-    let (caller_instance, _caller_id, caller_sway_id) = get_caller_instance().await;
+    let (_context_instance, context_id) = get_context_instance().await;
+    let (caller_instance, caller_id) = get_caller_instance().await;
     let send_amount = 11;
+    let caller_sway_id = testcontextcallercontract_mod::ContractId {
+        value: caller_id.into(),
+    };
 
     let result = caller_instance
         .call_get_amount_with_coins(send_amount, caller_sway_id)

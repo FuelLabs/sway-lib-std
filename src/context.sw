@@ -8,8 +8,8 @@ dep context/call_frames;
 dep context/registers;
 
 /// Retrieve the balance of asset 'asset_id' for the contract at 'contract_id'.
-pub fn balance(asset_id: ContractId, contract_id: ContractId) -> u64 {
-    asm(balance, token: asset_id.value, id: contract_id.value) {
+pub fn balance(asset_id: ContractId, target: ContractId) -> u64 {
+    asm(balance, token: asset_id.value, id: target.value) {
         bal balance token id;
         balance: u64
     }
@@ -21,8 +21,8 @@ pub fn this_balance(asset_id: ContractId) -> u64 {
 }
 
 /// Get the balance of coin `asset_id` for any contract `ctr_id`.
-pub fn balance_of_contract(asset_id: ContractId, ctr_id: ContractId) -> u64 {
-    balance(asset_id, ctr_id)
+pub fn balance_of_contract(asset_id: ContractId, target: ContractId) -> u64 {
+    balance(asset_id, target)
 }
 
 /// Get the amount of units of `msg_asset_id()` being sent.

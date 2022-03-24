@@ -51,6 +51,10 @@ async fn get_contracts() -> (
 #[tokio::test]
 async fn can_get_this_balance() {
     let (context_instance, context_id, caller_instance, caller_id) = get_contracts().await;
+
+    println!("Context contract deployed at: {:?}", context_id);
+    println!("Caller contract deployed at: {:?}", caller_id);
+
     let send_amount = 42;
 
     let context_sway_id = testcontextcallercontract_mod::ContractId {
@@ -60,6 +64,7 @@ async fn can_get_this_balance() {
     let caller_sway_id = testcontextcontract_mod::ContractId {
         value: caller_id.into(),
     };
+
     caller_instance.mint_coins(send_amount).call().await.unwrap();
 
     caller_instance
@@ -76,7 +81,7 @@ async fn can_get_this_balance() {
         .await
         .unwrap();
 
-    assert_eq!(result.value, send_amount);
+    assert_eq!(result.value, send_amount); // failing. probably requires SDK support for [inputs] as the coins aren't being transferred.
 }
 
 #[tokio::test]
@@ -138,6 +143,7 @@ async fn can_get_msg_id() {
         .call()
         .await
         .unwrap();
+
     assert_eq!(result.value, caller_sway_id);
 }
 

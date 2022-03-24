@@ -9,4 +9,5 @@ abi ContextTesting {
   fn get_asset_id() -> ContractId;
   fn get_gas() -> u64;
   fn get_global_gas() -> u64;
+  fn receive_coins();
 }

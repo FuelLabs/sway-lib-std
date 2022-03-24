@@ -28,4 +28,6 @@ impl ContextTesting for Contract {
     fn get_global_gas() -> u64 {
         global_gas()
     }
+
+    fn receive_coins() {}
 }

@@ -22,6 +22,7 @@ impl ContextCaller for Contract {
         mint(send_amount);
 
         context_contract.get_amount{
+            gas: 500_000,
             coins: send_amount,
             asset_id: ~ContractId::into(contract_id()),
         }()
@@ -33,6 +34,7 @@ impl ContextCaller for Contract {
         mint(send_amount);
 
         context_contract.get_balance_of_contract{
+            gas: 500_000,
             coins: send_amount,
             asset_id: ~ContractId::into(contract_id()),
         }(contract_id(), context_id)
@@ -44,6 +46,7 @@ impl ContextCaller for Contract {
         mint(send_amount);
 
         context_contract.get_amount{
+            gas: 500_000,
             coins: send_amount,
             asset_id: ~ContractId::into(contract_id()),
         }()
@@ -55,6 +58,7 @@ impl ContextCaller for Contract {
         mint(send_amount);
 
         context_contract.get_asset_id{
+            gas: 500_000,
             coins: send_amount,
             asset_id: ~ContractId::into(contract_id()),
         }()
@@ -66,6 +70,7 @@ impl ContextCaller for Contract {
         mint(send_amount);
 
         context_contract.get_gas{
+            gas: 500_000,
             coins: send_amount,
             asset_id: ~ContractId::into(contract_id()),
         }()
@@ -77,6 +82,7 @@ impl ContextCaller for Contract {
         mint(send_amount);
 
         context_contract.get_global_gas{
+            gas: 500_000,
             coins: send_amount,
             asset_id: ~ContractId::into(contract_id()),
         }()

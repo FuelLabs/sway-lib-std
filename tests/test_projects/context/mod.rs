@@ -48,7 +48,6 @@ async fn get_contracts() -> (
     (instance_1, id_1, instance_2, id_2)
 }
 
-
 #[tokio::test]
 async fn can_get_this_balance() {
     let (context_instance, context_id, caller_instance, caller_id) = get_contracts().await;
@@ -63,7 +62,7 @@ async fn can_get_this_balance() {
     };
 
     caller_instance
-        .call_get_this_balance_with_coins(send_amount, context_sway_id)
+        .call_receive_coins(send_amount, context_sway_id)
         .set_contracts(&[context_id])
         .tx_params(TxParameters::new(None, Some(1_000_000), None))
         .call()
@@ -72,7 +71,6 @@ async fn can_get_this_balance() {
 
     let result = context_instance
         .get_this_balance(caller_sway_id)
-        // .tx_params(TxParameters::new(None, Some(1_000_000), None))
         .call()
         .await
         .unwrap();
@@ -82,27 +80,20 @@ async fn can_get_this_balance() {
 
 #[tokio::test]
 async fn can_get_balance_of_contract() {
-    let (_, context_id, caller_instance, caller_id) = get_contracts().await;
-
+    let (context_instance, _, caller_instance, caller_id) = get_contracts().await;
     let amount = 42;
-    caller_instance.mint_coins(amount).call().await.unwrap();
-    let target = testcontextcallercontract_mod::ContractId {
+    let target = testcontextcontract_mod::ContractId {
         value: caller_id.into(),
     };
 
-    let result = caller_instance
-        .call_get_balance_of_contract_with_coins(amount, target)
-        .set_contracts(&[context_id])
+    caller_instance.mint_coins(amount).call().await.unwrap();
+
+    let result = context_instance
+        .get_balance_of_contract(target.clone(), target.clone())
+        .set_contracts(&[caller_id])
         .call()
         .await
         .unwrap();
-
-    // let result = context_instance
-    //     .get_balance_of_contract(asset_id.clone(), asset_id.clone())
-    //     .set_contracts(&[context_id, caller_id])
-    //     .call()
-    //     .await
-    //     .unwrap();
 
     assert_eq!(result.value, 42);
 }

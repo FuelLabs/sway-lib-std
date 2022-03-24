@@ -20,7 +20,6 @@ impl ContextCaller for Contract {
     fn call_get_this_balance_with_coins(send_amount: u64, target: ContractId) -> u64 {
         let id = target.value;
         let context_contract = abi(ContextTesting, id);
-        mint(send_amount);
 
         context_contract.get_this_balance{
             gas: 500_000,
@@ -32,7 +31,6 @@ impl ContextCaller for Contract {
     fn call_get_balance_of_contract_with_coins(send_amount: u64, target: ContractId) -> u64 {
         let id = target.value;
         let context_contract = abi(ContextTesting, id);
-        mint(send_amount);
 
         context_contract.get_balance_of_contract{
             gas: 500_000,
@@ -44,7 +42,6 @@ impl ContextCaller for Contract {
     fn call_get_amount_with_coins(send_amount: u64, target: ContractId) -> u64 {
         let id = target.value;
         let context_contract = abi(ContextTesting, id);
-        mint(send_amount);
 
         context_contract.get_amount{
             gas: 500_000,
@@ -56,7 +53,6 @@ impl ContextCaller for Contract {
     fn call_get_asset_id_with_coins(send_amount: u64, target: ContractId) -> ContractId {
         let id = target.value;
         let context_contract = abi(ContextTesting, id);
-        mint(send_amount);
 
         context_contract.get_asset_id{
             gas: 500_000,
@@ -68,7 +64,6 @@ impl ContextCaller for Contract {
     fn call_get_gas_with_coins(send_amount: u64, target: ContractId) -> u64 {
         let id = target.value;
         let context_contract = abi(ContextTesting, id);
-        mint(send_amount);
 
         context_contract.get_gas{
             gas: 500_000,
@@ -80,7 +75,6 @@ impl ContextCaller for Contract {
     fn call_get_global_gas_with_coins(send_amount: u64, target: ContractId) -> u64 {
         let id = target.value;
         let context_contract = abi(ContextTesting, id);
-        mint(send_amount);
 
         context_contract.get_global_gas{
             gas: 500_000,

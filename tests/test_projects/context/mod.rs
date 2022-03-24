@@ -60,6 +60,7 @@ async fn can_get_this_balance() {
     let caller_sway_id = testcontextcontract_mod::ContractId {
         value: caller_id.into(),
     };
+    caller_instance.mint_coins(send_amount).call().await.unwrap();
 
     caller_instance
         .call_receive_coins(send_amount, context_sway_id)
@@ -81,12 +82,12 @@ async fn can_get_this_balance() {
 #[tokio::test]
 async fn can_get_balance_of_contract() {
     let (context_instance, _, caller_instance, caller_id) = get_contracts().await;
-    let amount = 42;
+    let send_amount = 42;
     let target = testcontextcontract_mod::ContractId {
         value: caller_id.into(),
     };
 
-    caller_instance.mint_coins(amount).call().await.unwrap();
+    caller_instance.mint_coins(send_amount).call().await.unwrap();
 
     let result = context_instance
         .get_balance_of_contract(target.clone(), target.clone())
@@ -95,7 +96,7 @@ async fn can_get_balance_of_contract() {
         .await
         .unwrap();
 
-    assert_eq!(result.value, 42);
+    assert_eq!(result.value, send_amount);
 }
 
 #[tokio::test]
@@ -107,6 +108,8 @@ async fn can_get_msg_value() {
     let context_sway_id = testcontextcallercontract_mod::ContractId {
         value: context_id.into(),
     };
+
+    caller_instance.mint_coins(send_amount).call().await.unwrap();
 
     let result = caller_instance
         .call_get_amount_with_coins(send_amount, context_sway_id)
@@ -127,6 +130,8 @@ async fn can_get_msg_id() {
         value: caller_id.into(),
     };
 
+    caller_instance.mint_coins(send_amount).call().await.unwrap();
+
     let result = caller_instance
         .call_get_asset_id_with_coins(send_amount, caller_sway_id.clone())
         .set_contracts(&[context_id])
@@ -145,6 +150,8 @@ async fn can_get_msg_gas() {
         value: caller_id.into(),
     };
 
+    caller_instance.mint_coins(send_amount).call().await.unwrap();
+
     let result = caller_instance
         .call_get_gas_with_coins(send_amount, caller_sway_id)
         .set_contracts(&[context_id])
@@ -153,7 +160,7 @@ async fn can_get_msg_gas() {
         .await
         .unwrap();
 
-    assert_eq!(result.value, 11);
+    assert_eq!(result.value, send_amount);
 }
 
 #[tokio::test]
@@ -164,6 +171,8 @@ async fn can_get_global_gas() {
         value: caller_id.into(),
     };
 
+    caller_instance.mint_coins(send_amount).call().await.unwrap();
+
     let result = caller_instance
         .call_get_global_gas_with_coins(send_amount, caller_sway_id)
         .set_contracts(&[context_id])
@@ -171,5 +180,5 @@ async fn can_get_global_gas() {
         .await
         .unwrap();
 
-    assert_eq!(result.value, 11);
+    assert_eq!(result.value, send_amount);
 }

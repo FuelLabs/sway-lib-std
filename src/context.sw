@@ -6,8 +6,6 @@ dep context/registers;
 use ::contract_id::ContractId;
 use ::call_frames::*;
 
-
-
 /// Retrieve the balance of asset 'asset_id' for the contract at 'contract_id'.
 pub fn balance(asset_id: ContractId, target: ContractId) -> u64 {
     asm(balance, token: asset_id.value, id: target.value) {

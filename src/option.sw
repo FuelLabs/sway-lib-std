@@ -20,27 +20,26 @@ pub enum Option<T> {
 // Type implementation
 /////////////////////////////////////////////////////////////////////////////
 
-impl Option<T> {
-}
+impl<T> Option<T> {
+    /////////////////////////////////////////////////////////////////////////
+    // Querying the contained values
+    /////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////
-// Querying the contained values
-/////////////////////////////////////////////////////////////////////////
-
-/// Returns `true` if the result is [`Some`].
-pub fn option_is_some(o: Option) -> bool {
-    if let Option::Some(t) = o {
-        true
-    } else {
-        false
+    /// Returns `true` if the result is [`Some`].
+    fn option_is_some(self) -> bool {
+        if let Option::Some(t) = self {
+            true
+        } else {
+            false
+        }
     }
-}
 
-/// Returns `true` if the result is [`None`].
-pub fn option_is_none(o: Option) -> bool {
-    if let Option::Some(t) = o {
-        false
-    } else {
-        true
+    /// Returns `true` if the result is [`None`].
+    fn option_is_none(self) -> bool {
+        if let Option::Some(t) = self {
+            false
+        } else {
+            true
+        }
     }
 }

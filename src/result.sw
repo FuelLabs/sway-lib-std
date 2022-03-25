@@ -21,27 +21,26 @@ pub enum Result<T, E> {
 // Type implementation
 /////////////////////////////////////////////////////////////////////////////
 
-impl Result<T, E> {
-}
+impl<T, E> Result<T, E> {
+    /////////////////////////////////////////////////////////////////////////
+    // Querying the contained values
+    /////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////
-// Querying the contained values
-/////////////////////////////////////////////////////////////////////////
-
-/// Returns `true` if the result is [`Ok`].
-pub fn result_is_ok(r: Result) -> bool {
-    if let Result::Ok(t) = r {
-        true
-    } else {
-        false
+    /// Returns `true` if the result is [`Ok`].
+    fn result_is_ok(self) -> bool {
+        if let Result::Ok(t) = self {
+            true
+        } else {
+            false
+        }
     }
-}
 
-/// Returns `true` if the result is [`Err`].
-pub fn result_is_err(r: Result) -> bool {
-    if let Result::Ok(t) = r {
-        false
-    } else {
-        true
+    /// Returns `true` if the result is [`Err`].
+    fn result_is_err(self) -> bool {
+        if let Result::Ok(t) = self {
+            false
+        } else {
+            true
+        }
     }
 }

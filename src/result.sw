@@ -27,7 +27,7 @@ impl<T, E> Result<T, E> {
     /////////////////////////////////////////////////////////////////////////
 
     /// Returns `true` if the result is [`Ok`].
-    fn result_is_ok(self) -> bool {
+    fn is_ok(self) -> bool {
         if let Result::Ok(t) = self {
             true
         } else {
@@ -36,7 +36,7 @@ impl<T, E> Result<T, E> {
     }
 
     /// Returns `true` if the result is [`Err`].
-    fn result_is_err(self) -> bool {
+    fn is_err(self) -> bool {
         if let Result::Ok(t) = self {
             false
         } else {

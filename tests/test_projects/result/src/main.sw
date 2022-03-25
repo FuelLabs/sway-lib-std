@@ -11,7 +11,7 @@ fn main() {
 fn test_ok() {
     // let r = Result::<u64, ()>::Ok(42u64);
 
-    // if ( !result_is_ok(r) || result_is_err(r)) {
+    // if ( !r.is_ok() || r.is_err()) {
     //     panic(0);
     // }
 }
@@ -19,7 +19,7 @@ fn test_ok() {
 fn test_err() {
     // let r = Result::<(), ()>::Err(());
 
-    // if (result_is_ok(r) || !result_is_err(r)) {
+    // if (r.is_ok() || !r.is_err()) {
     //     panic(0);
     // }
 }

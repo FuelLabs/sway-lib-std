@@ -11,7 +11,7 @@ fn main() {
 fn test_some() {
     let o = Option::Some(42u64);
 
-    if ( !option_is_some(o) || option_is_none(o)) {
+    if (!o.is_some() || o.is_none()) {
         panic(0);
     }
 }
@@ -19,7 +19,7 @@ fn test_some() {
 fn test_none() {
     let o = Option::None();
 
-    if (option_is_some(o) || !option_is_none(o)) {
+    if (o.is_some() || !o.is_none()) {
         panic(0);
     }
 }

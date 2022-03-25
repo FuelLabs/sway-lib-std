@@ -26,7 +26,7 @@ impl<T> Option<T> {
     /////////////////////////////////////////////////////////////////////////
 
     /// Returns `true` if the result is [`Some`].
-    fn option_is_some(self) -> bool {
+    fn is_some(self) -> bool {
         if let Option::Some(t) = self {
             true
         } else {
@@ -35,7 +35,7 @@ impl<T> Option<T> {
     }
 
     /// Returns `true` if the result is [`None`].
-    fn option_is_none(self) -> bool {
+    fn is_none(self) -> bool {
         if let Option::Some(t) = self {
             false
         } else {

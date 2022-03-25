@@ -10,7 +10,7 @@ impl ContextTesting for Contract {
     }
 
     fn get_balance_of_contract(asset: ContractId, contract: ContractId) -> u64 {
-        balance_of_contract(asset, contract)
+        balance_of(asset, contract)
     }
 
     fn get_amount() -> u64 {

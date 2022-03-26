@@ -5,6 +5,7 @@ use ::address::Address;
 use ::assert::assert;
 use ::b512::B512;
 use ::contract_id::ContractId;
+use ::option::Option;
 use ::result::Result;
 
 pub enum AuthError {
@@ -92,6 +93,7 @@ fn get_coins_owner() -> Result<Sender, AuthError> {
     }
 
     // `candidate` must be `Option::Some` at this point, so can unwrap safely.
+    // Note: `inputs_count` is guaranteed to be at least 1 for any valid tx.
     Result::Ok(Sender::Address(candidate.unwrap()))
 }
 

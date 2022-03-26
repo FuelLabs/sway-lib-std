@@ -1,5 +1,6 @@
 library std;
 
+dep option;
 dep result;
 dep constants;
 dep contract_id;
@@ -9,7 +10,6 @@ dep storage;
 dep b512;
 dep address;
 dep chain;
-dep option;
 dep math;
 dep block;
 dep token;

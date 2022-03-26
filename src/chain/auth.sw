@@ -7,7 +7,6 @@ use ::chain::assert;
 use ::contract_id::ContractId;
 use ::result::Result;
 
-
 pub enum AuthError {
     ContextError: (),
 }

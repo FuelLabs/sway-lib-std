@@ -7,6 +7,8 @@
 
 library result;
 
+use ::panic::panic;
+
 /// `Result` is a type that represents either success ([`Ok`]) or failure
 /// ([`Err`]).
 pub enum Result<T, E> {
@@ -21,32 +23,39 @@ pub enum Result<T, E> {
 // Type implementation
 /////////////////////////////////////////////////////////////////////////////
 
-impl Result<T, E> {
+impl<T, E> Result<T, E> {
     /////////////////////////////////////////////////////////////////////////
     // Querying the contained values
     /////////////////////////////////////////////////////////////////////////
 
     /// Returns `true` if the result is [`Ok`].
     fn is_ok(self) -> bool {
-        match self {
-            Result::Ok(t) => {
-                true
-            },
-            _ => {
-                false
-            },
+        if let Result::Ok(t) = self {
+            true
+        } else {
+            false
         }
     }
 
     /// Returns `true` if the result is [`Err`].
     fn is_err(self) -> bool {
-        match self {
-            Result::Ok(t) => {
-                false
-            },
-            _ => {
-                true
-            },
+        if let Result::Ok(t) = self {
+            false
+        } else {
+            true
+        }
+    }
+
+    /// Returns the contained [`Ok`] value, consuming the `self` value.
+    ///
+    /// Because this function may panic, its use is generally discouraged.
+    /// Instead, prefer to use pattern matching and handle the [`Err`]
+    /// case explicitly.
+    fn unwrap(self) -> T {
+        if let Result::Ok(inner_value) = self {
+            inner_value
+        } else {
+            panic(0);
         }
     }
 }

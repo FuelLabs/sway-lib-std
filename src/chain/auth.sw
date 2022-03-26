@@ -5,7 +5,7 @@ use ::address::Address;
 use ::assert::assert;
 use ::b512::B512;
 use ::contract_id::ContractId;
-use ::option::Option;
+use ::option::*;
 use ::result::Result;
 
 pub enum AuthError {
@@ -34,6 +34,29 @@ pub fn caller_contract_id() -> ContractId {
         gm r1 i2;
         r1: b256
     })
+}
+
+/// If the input's type is `InputCoin`, return the owner.
+/// Otherwise, undefined behavior.
+fn get_input_owner(input_ptr: u32) -> Address {
+    // get data offest by 1 word
+    let data_ptr = asm(buffer, ptr: input_ptr, data_ptr) {
+        move buffer sp;
+        cfei i8;
+        addi data_ptr input_ptr i8;
+        mcpi buffer data_ptr i8;
+        buffer: u8
+    };
+
+    let owner_addr = ~Address::from(asm(buffer, ptr: data_ptr, owner_ptr) {
+        move buffer sp;
+        cfei i8;
+        addi owner_ptr data_ptr i16;
+        mcpi buffer owner_ptr i32;
+        buffer: b256
+    });
+
+    owner_addr
 }
 
 /// Get the `Sender` (i.e. `Address`or `ContractId`) from which a call was made.
@@ -73,7 +96,7 @@ fn get_coins_owner() -> Result<Sender, AuthError> {
             let input_owner = Option::Some(get_input_owner(input_pointer));
             if candidate.is_none() {
                 // This is the first input seen of the correct type.
-                candidate = Option::Some(input_owner);
+                candidate = input_owner;
             } else {
                 // Compare current coin owner to candidate.
                 // `candidate` and `input_owner` must be `Option::Some` at this point,
@@ -95,29 +118,6 @@ fn get_coins_owner() -> Result<Sender, AuthError> {
     // `candidate` must be `Option::Some` at this point, so can unwrap safely.
     // Note: `inputs_count` is guaranteed to be at least 1 for any valid tx.
     Result::Ok(Sender::Address(candidate.unwrap()))
-}
-
-/// If the input's type is `InputCoin`, return the owner.
-/// Otherwise, undefined behavior.
-fn get_input_owner(input_ptr: u32) -> Address {
-    // get data offest by 1 word
-    let data_ptr = asm(buffer, ptr: input_ptr, data_ptr) {
-        move buffer sp;
-        cfei i8;
-        addi data_ptr input_ptr i8;
-        mcpi buffer data_ptr i8;
-        buffer: u8
-    };
-
-    let owner_addr = ~Address::from(asm(buffer, ptr: data_ptr, owner_ptr) {
-        move buffer sp;
-        cfei i8;
-        addi owner_ptr data_ptr i16;
-        mcpi buffer owner_ptr i32;
-        buffer: b256
-    });
-
-    owner_addr
 }
 
 /// Get a pointer to an input given the index of the input.

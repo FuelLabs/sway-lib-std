@@ -25,16 +25,17 @@ pub fn caller_is_external() -> bool {
     }
 }
 
-fn caller_contract_id() -> ContractId {
+/// If caller is internal, returns the contract ID of the caller.
+/// Otherwise, undefined behavior.
+pub fn caller_contract_id() -> ContractId {
     ~ContractId::from(asm(r1) {
         gm r1 i2;
         r1: b256
     })
 }
 
-/// Get the `Sender` (i.e. `Address`| `ContractId`) from which a call was made.
-/// Returns a `Result::Ok(Sender)` or `Result::Err` is a sender cannot be determined.
-/// NOTE: Currently only returns `Result::Ok` variant if the parent context is internal.
+/// Get the `Sender` (i.e. `Address`or `ContractId`) from which a call was made.
+/// Returns a `Result::Ok(Sender)`, or `Result::Err(AuthError)` if a sender cannot be determined.
 pub fn msg_sender() -> Result<Sender, AuthError> {
     if caller_is_external() {
         let address = get_coins_owner();
@@ -44,37 +45,37 @@ pub fn msg_sender() -> Result<Sender, AuthError> {
             Result::Err(AuthError::ContextError)
         }
     } else {
-        // Get caller's `ContractId`
+        // Get caller's `ContractId`.
         Result::Ok(Sender::ContractId(caller_contract_id()))
     }
 }
 
-/// If the input's type is `InputCoin`, return the owner. Otherwise, error.
+/// If the input's type is `InputCoin`, return the owner.
+/// Otherwise, undefined behavior.
 fn get_input_owner(input_ptr: u32) -> Result<Sender> {
-        // get data offest by 1 word
-        let data_ptr = asm(buffer, ptr: input_ptr, data_ptr) {
-            move buffer sp;
-            cfei i8;
-            addi data_ptr input_ptr i8;
-            mcpi buffer data_ptr i8;
-            buffer: u8
-        };
+    // get data offest by 1 word
+    let data_ptr = asm(buffer, ptr: input_ptr, data_ptr) {
+        move buffer sp;
+        cfei i8;
+        addi data_ptr input_ptr i8;
+        mcpi buffer data_ptr i8;
+        buffer: u8
+    };
 
-        let owner_addr = ~Address::from(asm(buffer, ptr: data_ptr, owner_ptr) {
-            move buffer sp;
-            cfei i8;
-            addi owner_ptr data_ptr i16;
-            mcpi buffer owner_ptr i32;
-            buffer: b256
-        });
+    let owner_addr = ~Address::from(asm(buffer, ptr: data_ptr, owner_ptr) {
+        move buffer sp;
+        cfei i8;
+        addi owner_ptr data_ptr i16;
+        mcpi buffer owner_ptr i32;
+        buffer: b256
+    });
 
-        Result::Ok(Sender::Address(owner_addr))
-
+    Result::Ok(Sender::Address(owner_addr))
 }
 
-/// Get the owner of the inputs(of type `InputCoin`) to a TransactionScript,
+/// Get the owner of the inputs (of type `InputCoin`) to a TransactionScript,
 /// if they all share the same owner.
-pub fn get_coins_owner() -> Result<Sender> {
+fn get_coins_owner() -> Result<Sender> {
     let zero_addr = ~Address::from(0x0000000000000000000000000000000000000000000000000000000000000000);
     let target_input_type = 0u8;
     let inputs_count = get_inputs_count();
@@ -106,7 +107,7 @@ pub fn get_coins_owner() -> Result<Sender> {
                     // owners don't match. Break and return Err
                     i = inputs_count;
                     Result::Err(AuthError::ContextError)
-               };
+                };
             };
         };
     }

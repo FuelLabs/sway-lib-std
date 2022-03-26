@@ -54,42 +54,45 @@ pub fn msg_sender() -> Result<Sender, AuthError> {
 /// Get the owner of the inputs (of type `InputCoin`) to a TransactionScript,
 /// if they all share the same owner.
 fn get_coins_owner() -> Result<Sender, AuthError> {
-    let zero_addr = ~Address::from(0x0000000000000000000000000000000000000000000000000000000000000000);
     let target_input_type = 0u8;
     let inputs_count = get_inputs_count();
 
-    let mut candidate = zero_addr;
-    let mut input_owner = zero_addr;
+    let mut candidate = Option::None::<Address>();
     let mut i = 0u64;
-    let mut input_pointer: u32 = 0u32;
-    let mut input_type: u8 = 0u8;
 
     while i < inputs_count {
-        input_pointer = get_input_pointer(i);
-        input_type = get_input_type(input_pointer);
+        let input_pointer = get_input_pointer(i);
+        let input_type = get_input_type(input_pointer);
         if input_type != target_input_type {
-            // increment the counter and continue looping
-            i = i + 1;
+            // type != InputCoin
+            // Continue looping.
+            i;
         } else {
             // type == InputCoin
-            if candidate == zero_addr {
-                // this is the first input seen of the correct type
-                input_owner = get_input_owner(input_pointer);
-                candidate = input_owner;
+            let input_owner = Option::Some(get_input_owner(input_pointer));
+            if candidate.is_none() {
+                // This is the first input seen of the correct type.
+                candidate = Option::Some(input_owner);
             } else {
-                // compare current coin owner to candidate
-                if input_owner == candidate {
-                    // owners are a match, continue looping
-                    i = i + 1;
+                // Compare current coin owner to candidate.
+                // `candidate` and `input_owner` must be `Option::Some` at this point,
+                // so can unwrap safely.
+                if input_owner.unwrap() == candidate.unwrap() {
+                    // Owners are a match, continue looping.
+                    i;
                 } else {
-                    // owners don't match. Break and return Err
+                    // Owners don't match. Return Err.
                     i = inputs_count;
                     return Result::Err(AuthError::ContextError);
                 };
             };
         };
+
+        i = i + 1;
     }
-    Result::Ok(Sender::Address(candidate))
+
+    // `candidate` must be `Option::Some` at this point, so can unwrap safely.
+    Result::Ok(Sender::Address(candidate.unwrap()))
 }
 
 /// If the input's type is `InputCoin`, return the owner.

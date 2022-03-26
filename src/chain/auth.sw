@@ -2,8 +2,8 @@ library auth;
 //! Functionality for determining who is calling a contract.
 
 use ::address::Address;
+use ::assert::assert;
 use ::b512::B512;
-use ::chain::assert;
 use ::contract_id::ContractId;
 use ::result::Result;
 
@@ -39,9 +39,9 @@ pub fn caller_contract_id() -> ContractId {
 /// Returns a `Result::Ok(Sender)`, or `Result::Err(AuthError)` if a sender cannot be determined.
 pub fn msg_sender() -> Result<Sender, AuthError> {
     if caller_is_external() {
-        let address = get_coins_owner();
-        if let Result::Ok(inner_value) = address {
-            Result::Ok(Sender::Address(address))
+        let sender_res = get_coins_owner();
+        if let Result::Ok(sender) = sender_res {
+            Result::Ok(sender)
         } else {
             Result::Err(AuthError::ContextError)
         }
@@ -53,7 +53,7 @@ pub fn msg_sender() -> Result<Sender, AuthError> {
 
 /// If the input's type is `InputCoin`, return the owner.
 /// Otherwise, undefined behavior.
-fn get_input_owner(input_ptr: u32) -> Result<Sender> {
+fn get_input_owner(input_ptr: u32) -> Address {
     // get data offest by 1 word
     let data_ptr = asm(buffer, ptr: input_ptr, data_ptr) {
         move buffer sp;
@@ -71,19 +71,19 @@ fn get_input_owner(input_ptr: u32) -> Result<Sender> {
         buffer: b256
     });
 
-    Result::Ok(Sender::Address(owner_addr))
+    owner_addr
 }
 
 /// Get the owner of the inputs (of type `InputCoin`) to a TransactionScript,
 /// if they all share the same owner.
-fn get_coins_owner() -> Result<Sender> {
+fn get_coins_owner() -> Result<Sender, AuthError> {
     let zero_addr = ~Address::from(0x0000000000000000000000000000000000000000000000000000000000000000);
     let target_input_type = 0u8;
     let inputs_count = get_inputs_count();
 
-    let mut candidate = ~Address::from(0x0000000000000000000000000000000000000000000000000000000000000000);
-    let mut input_owner = ~Address::from(0x0000000000000000000000000000000000000000000000000000000000000000);
-    let mut i = 0u8;
+    let mut candidate = zero_addr;
+    let mut input_owner = zero_addr;
+    let mut i = 0u64;
     let mut input_pointer: u32 = 0u32;
     let mut input_type: u8 = 0u8;
 
@@ -107,7 +107,7 @@ fn get_coins_owner() -> Result<Sender> {
                 } else {
                     // owners don't match. Break and return Err
                     i = inputs_count;
-                    Result::Err(AuthError::ContextError)
+                    return Result::Err(AuthError::ContextError);
                 };
             };
         };
@@ -116,7 +116,7 @@ fn get_coins_owner() -> Result<Sender> {
 }
 
 /// Get a pointer to an input given the index of the input.
-fn get_input_pointer(n: u8) -> u32 {
+fn get_input_pointer(n: u64) -> u32 {
     // TX_START = 32 + MAX_INPUTS * (32 + 8) = 32 + 8 * (40) = 352
     // inputs   = TX_START + 12 words = 352 + 96             = 448
 

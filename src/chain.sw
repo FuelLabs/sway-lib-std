@@ -59,12 +59,3 @@ pub fn get_script_data<T>() -> T {
         to_return: T
     }
 }
-
-/// Assert that a value is true
-pub fn assert(a: bool) {
-    if !a {
-        panic(0);
-    } else {
-        ()
-    }
-}

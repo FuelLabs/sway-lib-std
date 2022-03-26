@@ -90,20 +90,21 @@ fn get_coins_owner() -> Result<Sender, AuthError> {
         if input_type != target_input_type {
             // type != InputCoin
             // Continue looping.
-            i;
+            i = i + 1;
         } else {
             // type == InputCoin
             let input_owner = Option::Some(get_input_owner(input_pointer));
             if candidate.is_none() {
                 // This is the first input seen of the correct type.
                 candidate = input_owner;
+                i = i + 1;
             } else {
                 // Compare current coin owner to candidate.
                 // `candidate` and `input_owner` must be `Option::Some` at this point,
                 // so can unwrap safely.
                 if input_owner.unwrap() == candidate.unwrap() {
                     // Owners are a match, continue looping.
-                    i;
+                    i = i + 1;
                 } else {
                     // Owners don't match. Return Err.
                     i = inputs_count;
@@ -111,8 +112,6 @@ fn get_coins_owner() -> Result<Sender, AuthError> {
                 };
             };
         };
-
-        i = i + 1;
     }
 
     // `candidate` must be `Option::Some` at this point, so can unwrap safely.

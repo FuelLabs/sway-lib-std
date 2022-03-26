@@ -51,29 +51,6 @@ pub fn msg_sender() -> Result<Sender, AuthError> {
     }
 }
 
-/// If the input's type is `InputCoin`, return the owner.
-/// Otherwise, undefined behavior.
-fn get_input_owner(input_ptr: u32) -> Address {
-    // get data offest by 1 word
-    let data_ptr = asm(buffer, ptr: input_ptr, data_ptr) {
-        move buffer sp;
-        cfei i8;
-        addi data_ptr input_ptr i8;
-        mcpi buffer data_ptr i8;
-        buffer: u8
-    };
-
-    let owner_addr = ~Address::from(asm(buffer, ptr: data_ptr, owner_ptr) {
-        move buffer sp;
-        cfei i8;
-        addi owner_ptr data_ptr i16;
-        mcpi buffer owner_ptr i32;
-        buffer: b256
-    });
-
-    owner_addr
-}
-
 /// Get the owner of the inputs (of type `InputCoin`) to a TransactionScript,
 /// if they all share the same owner.
 fn get_coins_owner() -> Result<Sender, AuthError> {
@@ -113,6 +90,29 @@ fn get_coins_owner() -> Result<Sender, AuthError> {
         };
     }
     Result::Ok(Sender::Address(candidate))
+}
+
+/// If the input's type is `InputCoin`, return the owner.
+/// Otherwise, undefined behavior.
+fn get_input_owner(input_ptr: u32) -> Address {
+    // get data offest by 1 word
+    let data_ptr = asm(buffer, ptr: input_ptr, data_ptr) {
+        move buffer sp;
+        cfei i8;
+        addi data_ptr input_ptr i8;
+        mcpi buffer data_ptr i8;
+        buffer: u8
+    };
+
+    let owner_addr = ~Address::from(asm(buffer, ptr: data_ptr, owner_ptr) {
+        move buffer sp;
+        cfei i8;
+        addi owner_ptr data_ptr i16;
+        mcpi buffer owner_ptr i32;
+        buffer: b256
+    });
+
+    owner_addr
 }
 
 /// Get a pointer to an input given the index of the input.

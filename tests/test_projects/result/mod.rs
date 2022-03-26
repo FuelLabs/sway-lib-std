@@ -27,6 +27,6 @@ async fn run_valid() {
 
     if let Receipt::Return { .. } = receipts[0] {
     } else {
-        assert!(false)
+        assert!(false);
     }
 }

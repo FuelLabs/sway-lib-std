@@ -17,7 +17,7 @@ fn test_some() {
 }
 
 fn test_none() {
-    let o = Option::None();
+    let o = Option::None::<()>();
 
     if (o.is_some() || !o.is_none()) {
         panic(0);

@@ -17,6 +17,7 @@ pub enum Sender {
 }
 
 /// Returns `true` if the caller is external (i.e. a script).
+/// Otherwise, returns `false`.
 /// ref: https://github.com/FuelLabs/fuel-specs/blob/master/specs/vm/opcodes.md#gm-get-metadata
 pub fn caller_is_external() -> bool {
     asm(r1) {

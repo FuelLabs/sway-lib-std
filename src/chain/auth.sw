@@ -55,7 +55,7 @@ fn get_input_owner(input_ptr: u32) -> Address {
     owner_addr
 }
 
-/// Get the `Sender` (i.e. `Address`or `ContractId`) from which a call was made.
+/// Get the `Sender` (i.e. `Address` or `ContractId`) from which a call was made.
 /// Returns a `Result::Ok(Sender)`, or `Result::Err(AuthError)` if a sender cannot be determined.
 pub fn msg_sender() -> Result<Sender, AuthError> {
     if caller_is_external() {

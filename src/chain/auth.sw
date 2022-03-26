@@ -122,8 +122,8 @@ fn get_coins_owner() -> Result<Sender, AuthError> {
 
 /// Get a pointer to an input given the index of the input.
 fn get_input_pointer(n: u64) -> u32 {
-    // TX_START = 32 + MAX_INPUTS * (32 + 8) = 32 + 8 * (40) = 352
-    // inputs   = TX_START + 12 words = 352 + 96             = 448
+    // TX_START = 32 + MAX_INPUTS * (32 + 8) = 32 + 255 * (40) = 10232
+    // inputs   = TX_START + 12 words = 10232 + 96             = 10328
 
     let input_start = asm(r1, r2: n) {
         xis r1 r2;
@@ -136,7 +136,7 @@ fn get_input_pointer(n: u64) -> u32 {
     };
 
     // Inputs begin at the 12th word in a TransactionScript
-    asm(buffer, start: input_start, length: input_length, inputs_ptr: 448) {
+    asm(buffer, start: input_start, length: input_length, inputs_ptr: 10328) {
         move buffer sp;
         mcp buffer input_start input_length;
         buffer: u32
@@ -156,10 +156,10 @@ fn get_input_type(p: u32) -> u8 {
 /// Get the number of inputs.
 fn get_inputs_count() -> u64 {
     // inputsCount is the 7th word in a `TransactionScript`
-    // TX_START    = 32 + MAX_INPUTS * (32 + 8) = 32 + 8 * (40) = 352
-    // inputsCount = TX_START + 7 words = 352 + 56              = 408
+    // TX_START    = 32 + MAX_INPUTS * (32 + 8) = 32 + 255 * (40) = 10232
+    // inputsCount = TX_START + 7 words = 10232 + 56              = 10288
 
-    asm(r1, inputs_count_ptr: 408) {
+    asm(r1, inputs_count_ptr: 10288) {
         lw r1 inputs_count_ptr i0;
         r1: u64
     }

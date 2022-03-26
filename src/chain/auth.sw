@@ -9,7 +9,7 @@ use ::option::*;
 use ::result::Result;
 
 pub enum AuthError {
-    ContextError: (),
+    InputsNotAllOwnedBySameAddress: (),
 }
 
 pub enum Sender {
@@ -67,7 +67,7 @@ pub fn msg_sender() -> Result<Sender, AuthError> {
         if let Result::Ok(sender) = sender_res {
             Result::Ok(sender)
         } else {
-            Result::Err(AuthError::ContextError)
+            sender_res
         }
     } else {
         // Get caller's `ContractId`.
@@ -108,7 +108,7 @@ fn get_coins_owner() -> Result<Sender, AuthError> {
                 } else {
                     // Owners don't match. Return Err.
                     i = inputs_count;
-                    return Result::Err(AuthError::ContextError);
+                    return Result::Err(AuthError::InputsNotAllOwnedBySameAddress);
                 };
             };
         };

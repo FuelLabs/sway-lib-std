@@ -39,20 +39,16 @@ pub fn caller_contract_id() -> ContractId {
 /// If the input's type is `InputCoin`, return the owner.
 /// Otherwise, undefined behavior.
 fn get_input_owner(input_ptr: u32) -> Address {
-    // get data offest by 1 word
-    let data_ptr = asm(buffer, ptr: input_ptr, data_ptr) {
+    let owner_addr = ~Address::from(asm(buffer, ptr: input_ptr) {
+        // Need to skip over six words, so add 8*6=48
+        addi ptr ptr i48;
+        // Save old stack pointer
         move buffer sp;
-        cfei i8;
-        addi data_ptr input_ptr i8;
-        mcpi buffer data_ptr i8;
-        buffer: u8
-    };
-
-    let owner_addr = ~Address::from(asm(buffer, ptr: data_ptr, owner_ptr) {
-        move buffer sp;
-        cfei i8;
-        addi owner_ptr data_ptr i16;
-        mcpi buffer owner_ptr i32;
+        // Extend stack by 32 bytes
+        cfei i32;
+        // Copy 32 bytes
+        mcpi buffer ptr i32;
+        // `buffer` now points to the 32 bytes
         buffer: b256
     });
 

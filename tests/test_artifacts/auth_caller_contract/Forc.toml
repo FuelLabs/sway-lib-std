@@ -6,4 +6,4 @@ name = "auth_caller_contract"
 
 [dependencies]
 std = { path = "../../../" }
-auth = { path = "../auth_testing_abi/src/"}
+auth_testing_abi = { path = "../auth_testing_abi"}

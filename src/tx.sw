@@ -42,7 +42,7 @@ const TX_SCRIPT_START_OFFSET = 10352;
 
 /// Get the transaction type.
 pub fn tx_type() -> u8 {
-    asm(r1, r2: TX_TYPE_OFFSET) {
+    asm(r1, r2: 10240) {
         lw r1 r2 i0;
         r1: u8
     }
@@ -50,7 +50,7 @@ pub fn tx_type() -> u8 {
 
 /// Get the transaction gas price.
 pub fn tx_gas_price() -> u64 {
-    asm(r1, r2: TX_GAS_PRICE_OFFSET) {
+    asm(r1, r2: 10248) {
         lw r1 r2 i0;
         r1: u64
     }
@@ -58,7 +58,7 @@ pub fn tx_gas_price() -> u64 {
 
 /// Get the transaction gas limit.
 pub fn tx_gas_limit() -> u64 {
-    asm(r1, r2: TX_GAS_LIMIT_OFFSET) {
+    asm(r1, r2: 10256) {
         lw r1 r2 i0;
         r1: u64
     }
@@ -66,7 +66,7 @@ pub fn tx_gas_limit() -> u64 {
 
 /// Get the transaction byte price.
 pub fn tx_byte_price() -> u64 {
-    asm(r1, r2: TX_BYTE_PRICE_OFFSET) {
+    asm(r1, r2: 10264) {
         lw r1 r2 i0;
         r1: u64
     }
@@ -74,7 +74,7 @@ pub fn tx_byte_price() -> u64 {
 
 /// Get the transaction maturity.
 pub fn tx_maturity() -> u32 {
-    asm(r1, r2: TX_MATURITY_OFFSET) {
+    asm(r1, r2: 10272) {
         lw r1 r2 i0;
         r1: u32
     }
@@ -82,7 +82,7 @@ pub fn tx_maturity() -> u32 {
 
 /// Get the transaction script length.
 pub fn tx_script_length() -> u64 {
-    asm(r1, r2: TX_SCRIPT_LENGTH_OFFSET) {
+    asm(r1, r2: 10280) {
         lw r1 r2 i0;
         r1: u64
     }
@@ -90,7 +90,7 @@ pub fn tx_script_length() -> u64 {
 
 /// Get the transaction script data length.
 pub fn tx_script_data_length() -> u64 {
-    asm(r1, r2: TX_SCRIPT_DATA_LENGTH_OFFSET) {
+    asm(r1, r2: 10288) {
         lw r1 r2 i0;
         r1: u64
     }
@@ -98,7 +98,7 @@ pub fn tx_script_data_length() -> u64 {
 
 /// Get the transaction inputs count.
 pub fn tx_inputs_count() -> u64 {
-    asm(r1, r2: TX_INPUTS_COUNT_OFFSET) {
+    asm(r1, r2: 10296) {
         lw r1 r2 i0;
         r1: u64
     }
@@ -106,7 +106,7 @@ pub fn tx_inputs_count() -> u64 {
 
 /// Get the transaction outputs count.
 pub fn tx_outputs_count() -> u64 {
-    asm(r1, r2: TX_OUTPUTS_COUNT_OFFSET) {
+    asm(r1, r2: 10304) {
         lw r1 r2 i0;
         r1: u64
     }
@@ -114,7 +114,7 @@ pub fn tx_outputs_count() -> u64 {
 
 /// Get the transaction witnesses count.
 pub fn tx_witnesses_count() -> u64 {
-    asm(r1, r2: TX_WITNESSES_COUNT_OFFSET) {
+    asm(r1, r2: 10312) {
         lw r1 r2 i0;
         r1: u64
     }
@@ -122,7 +122,7 @@ pub fn tx_witnesses_count() -> u64 {
 
 /// Get the transaction receipts root.
 pub fn tx_receipts_root() -> b256 {
-    asm(r1, r2: TX_RECEIPTS_ROOT_OFFSET) {
+    asm(r1, r2: 10320) {
         lw r1 r2 i0;
         r1: b256
     }
@@ -130,7 +130,7 @@ pub fn tx_receipts_root() -> b256 {
 
 /// Get the transaction script start offset.
 pub fn tx_script_start_offset() -> u64 {
-    asm(r1, r2: TX_SCRIPT_START_OFFSET) {
+    asm(r1, r2: 10352) {
         lw r1 r2 i0;
         r1: u64
     }
@@ -143,7 +143,7 @@ pub fn tx_script_start_offset() -> u64 {
 /// Get the script data, typed. Unsafe.
 pub fn get_script_data<T>() -> T {
     // TODO some safety checks on the input data? We are going to assume it is the right type for now.
-    asm(script_data_len, to_return, script_data_ptr, script_len, script_len_ptr: TX_SCRIPT_LENGTH_OFFSET, script_data_len_ptr: TX_SCRIPT_DATA_LENGTH_OFFSET) {
+    asm(script_data_len, to_return, script_data_ptr, script_len, script_len_ptr: 10280, script_data_len_ptr: 10288) {
         lw script_len script_len_ptr i0;
         lw script_data_len script_data_len_ptr i0;
         // get the start of the script data

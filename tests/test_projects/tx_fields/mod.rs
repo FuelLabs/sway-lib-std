@@ -6,6 +6,7 @@ use fuels_contract::contract::Contract;
 use fuels_contract::parameters::TxParameters;
 use fuels_signers::util::test_helpers::setup_test_provider_and_wallet;
 use fuels_signers::wallet::Wallet;
+use fuels_signers::Signer;
 
 abigen!(
     TxContractTest,
@@ -232,12 +233,11 @@ async fn can_get_tx_input_type() {
 
 #[tokio::test]
 async fn can_get_tx_input_coin_owner() {
-    let (contract_instance, _, _) = get_contracts().await;
+    let (contract_instance, _, wallet) = get_contracts().await;
 
     // Coin input
-    // TODO figure out how to compute the owner from SDK
     let input_owner = txcontracttest_mod::Address {
-        value: *Bytes32::default(),
+        value: wallet.address().into(),
     };
     let result_ptr = contract_instance
         .get_tx_input_pointer(1)

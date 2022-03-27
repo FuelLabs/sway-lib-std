@@ -1,9 +1,9 @@
 contract;
 
-use std::result::{Result};
 use std::chain::auth::*;
 use std::contract_id::ContractId;
 use auth_testing_abi::AuthTesting;
+use std::constants::ZERO;
 
 
 impl AuthTesting for Contract {
@@ -11,8 +11,12 @@ impl AuthTesting for Contract {
         caller_is_external()
     }
 
-    /// TODO: Fix return type, supposed to be a `Result`
-    fn returns_msg_sender() -> Result<Sender, AuthError> {
-        msg_sender()
+    fn returns_msg_sender() -> ContractId {
+       let sender = msg_sender();
+       if let Result::Ok(v) = sender {
+           v.unwrap()
+       } else {
+           ~ContractId::from(ZERO)
+       }
     }
 }

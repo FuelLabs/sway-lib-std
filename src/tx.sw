@@ -25,7 +25,7 @@ use ::contract_id::ContractId;
 // outputsCount     = TX_START +  8*WORD_SIZE = 10240 +  8*8 = 10304
 // witnessesCount   = TX_START +  9*WORD_SIZE = 10240 +  9*8 = 10312
 // receiptsRoot     = TX_START + 10*WORD_SIZE = 10240 + 10*8 = 10320
-// script start     = TX_START + 11*WORD_SIZE = 10240 + 11*8 = 10328
+// script start     = TX_START + 11*WORD_SIZE = 10240 + 14*8 = 10352
 
 const TX_TYPE_OFFSET = 10240;
 const TX_GAS_PRICE_OFFSET = 10248;
@@ -38,7 +38,7 @@ const TX_INPUTS_COUNT_OFFSET = 10296;
 const TX_OUTPUTS_COUNT_OFFSET = 10304;
 const TX_WITNESSES_COUNT_OFFSET = 10312;
 const TX_RECEIPTS_ROOT_OFFSET = 10320;
-const TX_SCRIPT_START_OFFSET = 10328;
+const TX_SCRIPT_START_OFFSET = 10352;
 
 /// Get the transaction type.
 pub fn tx_type() -> u8 {
@@ -48,9 +48,89 @@ pub fn tx_type() -> u8 {
     }
 }
 
-/// Get the number of inputs.
-pub fn get_inputs_count() -> u64 {
+/// Get the transaction gas price.
+pub fn tx_gas_price() -> u64 {
+    asm(r1, r2: TX_GAS_PRICE_OFFSET) {
+        lw r1 r2 i0;
+        r1: u64
+    }
+}
+
+/// Get the transaction gas limit.
+pub fn tx_gas_limit() -> u64 {
+    asm(r1, r2: TX_GAS_LIMIT_OFFSET) {
+        lw r1 r2 i0;
+        r1: u64
+    }
+}
+
+/// Get the transaction byte price.
+pub fn tx_byte_price() -> u64 {
+    asm(r1, r2: TX_BYTE_PRICE_OFFSET) {
+        lw r1 r2 i0;
+        r1: u64
+    }
+}
+
+/// Get the transaction maturity.
+pub fn tx_maturity() -> u32 {
+    asm(r1, r2: TX_MATURITY_OFFSET) {
+        lw r1 r2 i0;
+        r1: u32
+    }
+}
+
+/// Get the transaction script length.
+pub fn tx_script_length() -> u64 {
+    asm(r1, r2: TX_SCRIPT_LENGTH_OFFSET) {
+        lw r1 r2 i0;
+        r1: u64
+    }
+}
+
+/// Get the transaction script data length.
+pub fn tx_script_data_length() -> u64 {
+    asm(r1, r2: TX_SCRIPT_DATA_LENGTH_OFFSET) {
+        lw r1 r2 i0;
+        r1: u64
+    }
+}
+
+/// Get the transaction inputs count.
+pub fn tx_inputs_count() -> u64 {
     asm(r1, r2: TX_INPUTS_COUNT_OFFSET) {
+        lw r1 r2 i0;
+        r1: u64
+    }
+}
+
+/// Get the transaction outputs count.
+pub fn tx_outputs_count() -> u64 {
+    asm(r1, r2: TX_OUTPUTS_COUNT_OFFSET) {
+        lw r1 r2 i0;
+        r1: u64
+    }
+}
+
+/// Get the transaction witnesses count.
+pub fn tx_witnesses_count() -> u64 {
+    asm(r1, r2: TX_WITNESSES_COUNT_OFFSET) {
+        lw r1 r2 i0;
+        r1: u64
+    }
+}
+
+/// Get the transaction receipts root.
+pub fn tx_receipts_root() -> b256 {
+    asm(r1, r2: TX_RECEIPTS_ROOT_OFFSET) {
+        lw r1 r2 i0;
+        r1: b256
+    }
+}
+
+/// Get the transaction script start offset.
+pub fn tx_script_start_offset() -> u64 {
+    asm(r1, r2: TX_SCRIPT_START_OFFSET) {
         lw r1 r2 i0;
         r1: u64
     }

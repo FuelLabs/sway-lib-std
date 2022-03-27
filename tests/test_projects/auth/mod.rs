@@ -1,9 +1,8 @@
-use fuel_tx::{Receipt, Salt, Transaction};
+use fuel_tx::{Salt, Transaction};
 use fuels_abigen_macro::abigen;
-use fuels_contract::{contract::Contract, script::Script};
+use fuels_contract::{contract::Contract, script::Script, parameters::TxParameters};
 use fuel_types::ContractId;
-use fuel_core::service::{Config, FuelService};
-use fuel_gql_client::client::FuelClient;
+use fuel_core::service::{Config};
 use fuels_signers::provider::Provider;
 use fuels_signers::util::test_helpers::setup_test_provider_and_wallet;
 use std::fs::read;
@@ -14,18 +13,41 @@ abigen!(AuthCallerContract, "test_artifacts/auth_caller_contract/out/debug/auth_
 
 #[tokio::test]
 async fn is_external_from_internal() {
-    let (auth_instance, auth_id, caller_instance, caller_id) = get_contracts().await;
+    let (auth_instance, _, _, _) = get_contracts().await;
+    let result = auth_instance
+        .is_caller_external()
+        .call()
+        .await
+        .unwrap();
+
+    assert_eq!(result.value, false);
+
 }
 
-#[tokio::test]
-#[should_panic]
-async fn is_external_from_external() {
-    let (auth_instance, auth_id, caller_instance, caller_id) = get_contracts().await;
-}
+// #[tokio::test]
+// #[should_panic]
+// async fn is_external_from_external() {
+//     let (auth_instance, auth_id, caller_instance, caller_id) = get_contracts().await;
+
+//     let auth_sway_id= authcallercontract_mod::ContractId {
+//         value: auth_id.into(),
+//     };
+
+//     let result = caller_instance
+//         .call_auth_contract(auth_sway_id)
+//         .call()
+//         .await
+//         .unwrap();
+
+//         assert_eq!(result.value, true);
+// }
 
 #[tokio::test]
 async fn msg_sender_from_sdk() {
     let (auth_instance, auth_id, caller_instance, caller_id) = get_contracts().await;
+    let zero_address = authcontract_mod::ContractId {
+        value: [0u8; 32]
+    };
 
     let result = auth_instance
         .returns_msg_sender()
@@ -34,28 +56,28 @@ async fn msg_sender_from_sdk() {
         .unwrap();
 
         // TODO: Fix this, should be returning a `Result`
-        assert_eq!(result.value, 2);
+        assert_eq!(result.value, zero_address);
 }
 
 #[tokio::test]
 async fn msg_sender_from_contract() {
     let (auth_instance, auth_id, caller_instance, caller_id) = get_contracts().await;
 
-    // let _zero_id = authcallercontract_mod::ContractId {
-    //     value: auth_caller_id.into(),
-    // };
+    let caller_sway_id= authcallercontract_mod::ContractId {
+        value: caller_id.into(),
+    };
 
-    // let sway_id= authcallercontract_mod::ContractId {
-    //     value: auth_caller_id.into(),
-    // };
+    let auth_sway_id= authcallercontract_mod::ContractId {
+        value: auth_id.into(),
+    };
 
     let result = caller_instance
-        .call_auth_contract()
+        .call_auth_contract(auth_sway_id)
         .call()
         .await
         .unwrap();
 
-        assert_eq!(result.value, 2);
+        assert_eq!(result.value, caller_sway_id);
 }
 
 #[tokio::test]

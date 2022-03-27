@@ -1,8 +1,8 @@
-use fuel_tx::{AssetId, ContractId, Salt};
+use fuel_tx::{ContractId, Salt};
 use fuel_vm::consts::VM_MAX_RAM;
 use fuels_abigen_macro::abigen;
 use fuels_contract::contract::Contract;
-use fuels_contract::parameters::{CallParameters, TxParameters};
+use fuels_contract::parameters::{TxParameters};
 use fuels_signers::util::test_helpers::setup_test_provider_and_wallet;
 
 abigen!(
@@ -65,14 +65,10 @@ async fn can_get_this_balance() {
         .await
         .unwrap();
 
-    let asset: [u8; 32] = caller_id.into();
-    let forward_params = CallParameters::new(Some(send_amount), Some(AssetId::from(asset)));
-
     caller_instance
         .call_receive_coins(send_amount, context_sway_id)
         .set_contracts(&[context_id])
         .tx_params(TxParameters::new(None, Some(1_000_000), None))
-        .call_params(forward_params)
         .call()
         .await
         .unwrap();
@@ -150,14 +146,11 @@ async fn can_get_msg_id() {
         .call()
         .await
         .unwrap();
-    let asset: [u8; 32] = caller_id.into();
-    let forward_params = CallParameters::new(Some(send_amount), Some(AssetId::from(asset)));
 
     let result = caller_instance
         .call_get_asset_id_with_coins(send_amount, context_sway_id)
-        .set_contracts(&[context_id])
+        .set_contracts(&[caller_id, context_id])
         .tx_params(TxParameters::new(None, Some(1_000_000), None))
-        .call_params(forward_params)
         .call()
         .await
         .unwrap();
@@ -167,7 +160,7 @@ async fn can_get_msg_id() {
 
 #[tokio::test]
 async fn can_get_msg_gas() {
-    let (_, context_id, caller_instance, caller_id) = get_contracts().await;
+    let (_, context_id, caller_instance, _) = get_contracts().await;
     let send_amount = 11;
     let context_sway_id = testcontextcallercontract_mod::ContractId {
         value: context_id.into(),
@@ -179,14 +172,10 @@ async fn can_get_msg_gas() {
         .await
         .unwrap();
 
-    let asset: [u8; 32] = caller_id.into();
-    let forward_params = CallParameters::new(Some(send_amount), Some(AssetId::from(asset)));
-
     let result = caller_instance
         .call_get_gas_with_coins(send_amount, context_sway_id)
         .set_contracts(&[context_id])
         .tx_params(TxParameters::new(Some(0), Some(1_000_000), None))
-        .call_params(forward_params)
         .call()
         .await
         .unwrap();
@@ -196,13 +185,12 @@ async fn can_get_msg_gas() {
 
 #[tokio::test]
 async fn can_get_global_gas() {
-    let (_, context_id, caller_instance, caller_id) = get_contracts().await;
+    let (_, context_id, caller_instance, _) = get_contracts().await;
     let send_amount = 11;
     let context_sway_id = testcontextcallercontract_mod::ContractId {
         value: context_id.into(),
     };
 
-    println!("here! 1");
     caller_instance
         .mint_coins(send_amount)
         .tx_params(TxParameters::new(None, Some(1_000_000), None))
@@ -210,21 +198,13 @@ async fn can_get_global_gas() {
         .await
         .unwrap();
 
-    println!("here! 2");
-
-    let asset: [u8; 32] = caller_id.into();
-    let forward_params = CallParameters::new(Some(send_amount), Some(AssetId::from(asset)));
-    println!("here! 3");
-
     let result = caller_instance
         .call_get_global_gas_with_coins(send_amount, context_sway_id)
         .set_contracts(&[context_id])
         .tx_params(TxParameters::new(None, Some(1_000_000), None))
-        .call_params(forward_params)
         .call()
         .await
         .unwrap();
-    println!("here! 4");
 
     is_within_range(result.value);
 }

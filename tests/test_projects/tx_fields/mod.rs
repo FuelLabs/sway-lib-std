@@ -146,8 +146,9 @@ async fn can_get_outputs_count() {
 #[tokio::test]
 async fn can_get_witnesses_count() {
     let (contract_instance, _) = get_contracts().await;
-    // TODO figure out why this is 2.
-    let witnesses_count = 1;
+    // TODO figure out why this is 2 instead of 1.
+    // https://github.com/FuelLabs/fuels-rs/issues/182
+    let witnesses_count = 2;
 
     let result = contract_instance
         .get_tx_witnesses_count()

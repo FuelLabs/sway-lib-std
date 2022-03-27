@@ -133,9 +133,9 @@ fn get_input_type(ptr: u32) -> u8 {
 
 /// Get the number of inputs.
 fn get_inputs_count() -> u64 {
-    // inputsCount is the 7th word in a `TransactionScript`
+    // `inputsCount` is the 8th word in a `TransactionScript`
     // TX_START    = 32 + MAX_INPUTS * (32 + 8) = 32 + 255 * (40) = 10232
-    // inputsCount = TX_START + 6 words = 10232 + 48              = 10280
+    // inputsCount = TX_START + 7 words = 10232 + 56              = 10288
 
     asm(r1, r2: 10288) {
         lw r1 r2 i0;

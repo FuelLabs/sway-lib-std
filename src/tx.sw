@@ -201,3 +201,19 @@ pub fn tx_input_owner(input_ptr: u32) -> Address {
 ////////////////////////////////////////
 // Outputs
 ////////////////////////////////////////
+
+/// Get a pointer to an output given the index of the output.
+pub fn tx_output_pointer(index: u64) -> u32 {
+    asm(r1, r2: index) {
+        xos r1 r2;
+        r1: u32
+    }
+}
+
+/// Get the type of an output given a pointer to the output.
+pub fn tx_output_type(ptr: u32) -> u8 {
+    asm(r1, r2: ptr) {
+        lw r1 r2 i0;
+        r1: u8
+    }
+}

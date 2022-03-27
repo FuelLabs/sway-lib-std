@@ -1,4 +1,6 @@
 use fuel_tx::{Bytes32, ContractId, Salt};
+use fuel_types::bytes::WORD_SIZE;
+use fuel_vm::consts::VM_TX_MEMORY;
 use fuels_abigen_macro::abigen;
 use fuels_contract::contract::Contract;
 use fuels_contract::parameters::TxParameters;
@@ -171,14 +173,26 @@ async fn can_get_receipts_root() {
 #[tokio::test]
 async fn can_get_script_start_offset() {
     let (contract_instance, _) = get_contracts().await;
-    let script_start_offset = 0;
+    // TODO https://github.com/FuelLabs/fuel-tx/issues/98
+    const TRANSACTION_SCRIPT_FIXED_SIZE: usize = WORD_SIZE // Identifier
+    + WORD_SIZE // Gas price
+    + WORD_SIZE // Gas limit
+    + WORD_SIZE // Byte price
+    + WORD_SIZE // Maturity
+    + WORD_SIZE // Script size
+    + WORD_SIZE // Script data size
+    + WORD_SIZE // Inputs size
+    + WORD_SIZE // Outputs size
+    + WORD_SIZE // Witnesses size
+    + Bytes32::LEN; // Receipts root
+    let script_start_offset = VM_TX_MEMORY + TRANSACTION_SCRIPT_FIXED_SIZE;
 
     let result = contract_instance
         .get_tx_script_start_offset()
         .call()
         .await
         .unwrap();
-    assert_eq!(result.value, script_start_offset);
+    assert_eq!(result.value, script_start_offset as u64);
 }
 
 #[tokio::test]

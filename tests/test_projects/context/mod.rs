@@ -2,7 +2,7 @@ use fuel_tx::{ContractId, Salt};
 use fuel_vm::consts::VM_MAX_RAM;
 use fuels_abigen_macro::abigen;
 use fuels_contract::contract::Contract;
-use fuels_contract::parameters::{TxParameters};
+use fuels_contract::parameters::TxParameters;
 use fuels_signers::util::test_helpers::setup_test_provider_and_wallet;
 
 abigen!(

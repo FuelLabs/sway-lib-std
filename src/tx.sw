@@ -140,8 +140,9 @@ pub fn tx_script_start_offset() -> u64 {
 // Script
 ////////////////////////////////////////
 
-// TODO some safety checks on the input data? We are going to assume it is the right type for now.
+/// Get the script data, typed. Unsafe.
 pub fn get_script_data<T>() -> T {
+    // TODO some safety checks on the input data? We are going to assume it is the right type for now.
     asm(script_data_len, to_return, script_data_ptr, script_len, script_len_ptr: TX_SCRIPT_LENGTH_OFFSET, script_data_len_ptr: TX_SCRIPT_DATA_LENGTH_OFFSET) {
         lw script_len script_len_ptr i0;
         lw script_data_len script_data_len_ptr i0;
@@ -162,15 +163,15 @@ pub fn get_script_data<T>() -> T {
 ////////////////////////////////////////
 
 /// Get a pointer to an input given the index of the input.
-pub fn get_input_pointer(index: u64) -> u32 {
+pub fn tx_input_pointer(index: u64) -> u32 {
     asm(r1, r2: index) {
         xis r1 r2;
         r1: u32
     }
 }
 
-/// Get the type (0|1) of an input given a pointer to the input.
-pub fn get_input_type(ptr: u32) -> u8 {
+/// Get the type of an input given a pointer to the input.
+pub fn tx_input_type(ptr: u32) -> u8 {
     asm(r1, r2: ptr) {
         lw r1 r2 i0;
         r1: u8
@@ -179,7 +180,7 @@ pub fn get_input_type(ptr: u32) -> u8 {
 
 /// If the input's type is `InputCoin`, return the owner.
 /// Otherwise, undefined behavior.
-pub fn get_input_owner(input_ptr: u32) -> Address {
+pub fn tx_input_owner(input_ptr: u32) -> Address {
     let owner_addr = ~Address::from(asm(buffer, ptr: input_ptr) {
         // Need to skip over six words, so add 8*6=48
         addi ptr ptr i48;

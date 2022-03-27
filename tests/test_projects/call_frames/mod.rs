@@ -1,12 +1,8 @@
-use fuel_tx::{AssetId, ContractId, Salt};
+use fuel_tx::{ContractId, Salt};
 use fuel_vm::consts::VM_MAX_RAM;
 use fuels_abigen_macro::abigen;
-use fuels_contract::{
-    contract::Contract,
-    parameters::{CallParameters, TxParameters},
-};
+use fuels_contract::{contract::Contract, parameters::TxParameters};
 use fuels_signers::util::test_helpers;
-use rand::{prelude::StdRng, Rng, SeedableRng};
 
 abigen!(
     CallFramesTestContract,

@@ -16,7 +16,7 @@ impl AuthTesting for Contract {
        let sender = msg_sender();
        if let Result::Ok(v) = sender {
            if let Sender::Id(i) = v {
-               i
+               v
            } else {
                ~ContractId::from(ZERO)
            }

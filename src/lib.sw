@@ -1,5 +1,8 @@
 library std;
 
+dep panic;
+dep option;
+dep result;
 dep constants;
 dep contract_id;
 dep context;

@@ -1,24 +1,25 @@
+use fuel_core::service::Config;
 use fuel_tx::{Salt, Transaction};
-use fuels_abigen_macro::abigen;
-use fuels_contract::{contract::Contract, script::Script, parameters::TxParameters};
 use fuel_types::ContractId;
-use fuel_core::service::{Config};
+use fuels_abigen_macro::abigen;
+use fuels_contract::{contract::Contract, parameters::TxParameters, script::Script};
 use fuels_signers::provider::Provider;
 use fuels_signers::util::test_helpers::setup_test_provider_and_wallet;
 use std::fs::read;
 
-
-abigen!(AuthContract, "test_artifacts/auth_testing_contract/out/debug/auth_testing_contract-abi.json");
-abigen!(AuthCallerContract, "test_artifacts/auth_caller_contract/out/debug/auth_caller_contract-abi.json");
+abigen!(
+    AuthContract,
+    "test_artifacts/auth_testing_contract/out/debug/auth_testing_contract-abi.json"
+);
+abigen!(
+    AuthCallerContract,
+    "test_artifacts/auth_caller_contract/out/debug/auth_caller_contract-abi.json"
+);
 
 #[tokio::test]
 async fn is_external_from_sdk() {
     let (auth_instance, _, _, _) = get_contracts().await;
-    let result = auth_instance
-        .is_caller_external()
-        .call()
-        .await
-        .unwrap();
+    let result = auth_instance.is_caller_external().call().await.unwrap();
 
     assert_eq!(result.value, true);
 }
@@ -28,11 +29,7 @@ async fn is_external_from_sdk() {
 async fn is_external_from_script() {
     let (auth_instance, _, _, _) = get_contracts().await;
 
-    let result = auth_instance
-        .is_caller_external()
-        .call()
-        .await
-        .unwrap();
+    let result = auth_instance.is_caller_external().call().await.unwrap();
 
     assert_eq!(result.value, false);
 }
@@ -40,16 +37,9 @@ async fn is_external_from_script() {
 #[tokio::test]
 async fn msg_sender_from_sdk() {
     let (auth_instance, _, _, _) = get_contracts().await;
-    let zero_address = authcontract_mod::ContractId {
-        value: [0u8; 32]
-    };
+    let zero_address = authcontract_mod::ContractId { value: [0u8; 32] };
 
-    let result = auth_instance
-        .returns_msg_sender()
-        .call()
-        .await
-        .unwrap();
-
+    let result = auth_instance.returns_msg_sender().call().await.unwrap();
 
     assert_eq!(result.value, zero_address);
 }
@@ -58,11 +48,11 @@ async fn msg_sender_from_sdk() {
 async fn msg_sender_from_contract() {
     let (_, auth_id, caller_instance, caller_id) = get_contracts().await;
 
-    let caller_sway_id= authcallercontract_mod::ContractId {
+    let caller_sway_id = authcallercontract_mod::ContractId {
         value: caller_id.into(),
     };
 
-    let auth_sway_id= authcallercontract_mod::ContractId {
+    let auth_sway_id = authcallercontract_mod::ContractId {
         value: auth_id.into(),
     };
 
@@ -73,36 +63,32 @@ async fn msg_sender_from_contract() {
         .await
         .unwrap();
 
-        assert_eq!(result.value, caller_sway_id);
+    assert_eq!(result.value, caller_sway_id);
 }
 
 #[tokio::test]
 #[ignore]
 async fn msg_sender_from_script() {
     get_contracts().await;
-    let _zero_id = authcallercontract_mod::ContractId {
-        value: [0u8; 32],
-    };
+    let _zero_id = authcallercontract_mod::ContractId { value: [0u8; 32] };
     let path_to_bin = "test_artifacts/auth_caller_script/out/debug/auth_caller_script.bin";
 
     let _return_val = ez_script(path_to_bin).await;
     // something is broken here. script is returning a u64 ?
     // look at 'if let's in auth_testing_contract::returns_msg_sender
     // assert_eq!(return_val, zero_id);
-
 }
 
-async fn get_contracts() -> (
-    AuthContract,
-    ContractId,
-    AuthCallerContract,
-    ContractId,
-) {
+async fn get_contracts() -> (AuthContract, ContractId, AuthCallerContract, ContractId) {
     let salt = Salt::from([0u8; 32]);
     let (provider, wallet) = setup_test_provider_and_wallet().await;
-    let compiled_1 =
-        Contract::load_sway_contract("test_artifacts/auth_testing_contract/out/debug/auth_testing_contract.bin", salt).unwrap();
-    let compiled_2 = Contract::load_sway_contract("test_artifacts/auth_caller_contract/out/debug/auth_caller_contract.bin",
+    let compiled_1 = Contract::load_sway_contract(
+        "test_artifacts/auth_testing_contract/out/debug/auth_testing_contract.bin",
+        salt,
+    )
+    .unwrap();
+    let compiled_2 = Contract::load_sway_contract(
+        "test_artifacts/auth_caller_contract/out/debug/auth_caller_contract.bin",
         salt,
     )
     .unwrap();

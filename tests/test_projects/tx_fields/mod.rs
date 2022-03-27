@@ -229,7 +229,27 @@ async fn can_get_tx_input_type() {
     assert_eq!(result.value, input_type);
 }
 
-// TODO test get_tx_input_coin_owner(input_ptr: u32) -> Address;
+#[tokio::test]
+async fn can_get_tx_input_coin_owner() {
+    let (contract_instance, _) = get_contracts().await;
+
+    // Coin input
+    // TODO figure out how to compute the owner from SDK
+    let input_owner = txcontracttest_mod::Address {
+        value: *Bytes32::default(),
+    };
+    let result_ptr = contract_instance
+        .get_tx_input_pointer(1)
+        .call()
+        .await
+        .unwrap();
+    let result = contract_instance
+        .get_tx_input_coin_owner(result_ptr.value)
+        .call()
+        .await
+        .unwrap();
+    assert_eq!(result.value, input_owner);
+}
 
 #[tokio::test]
 async fn can_get_tx_output_type() {

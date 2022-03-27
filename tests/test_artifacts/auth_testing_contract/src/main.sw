@@ -3,7 +3,7 @@ contract;
 use std::result::{Result};
 use std::chain::auth::*;
 use std::contract_id::ContractId;
-use auth::AuthTesting;
+use auth_testing_abi::AuthTesting;
 
 
 impl AuthTesting for Contract {
@@ -12,7 +12,7 @@ impl AuthTesting for Contract {
     }
 
     /// TODO: Fix return type, supposed to be a `Result`
-    fn returns_msg_sender() -> ContractId {
+    fn returns_msg_sender() -> Result<Sender, AuthError> {
         msg_sender()
     }
 }

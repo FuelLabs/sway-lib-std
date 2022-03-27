@@ -141,23 +141,23 @@ pub fn tx_script_start_offset() -> u64 {
 ////////////////////////////////////////
 
 /// Get the script data, typed. Unsafe.
-fn get_script_data<T>() -> T {
-    // TODO some safety checks on the input data? We are going to assume it is the right type for now.
-    // TODO test this before making pub.
-    asm(script_data_len, to_return, script_data_ptr, script_len, script_len_ptr: 10280, script_data_len_ptr: 10288) {
-        lw script_len script_len_ptr i0;
-        lw script_data_len script_data_len_ptr i0;
-        // get the start of the script data
-        // script_len + script_start
-        add script_data_ptr script_len is;
-        // allocate memory to copy script data into
-        aloc script_data_len;
-        move to_return sp;
-        // copy script data into above buffer
-        mcp to_return script_data_ptr script_data_len;
-        to_return: T
-    }
-}
+// pub fn get_script_data<T>() -> T {
+//     // TODO some safety checks on the input data? We are going to assume it is the right type for now.
+//     // TODO test this before uncommenting.
+//     asm(script_data_len, to_return, script_data_ptr, script_len, script_len_ptr: 10280, script_data_len_ptr: 10288) {
+//         lw script_len script_len_ptr i0;
+//         lw script_data_len script_data_len_ptr i0;
+//         // get the start of the script data
+//         // script_len + script_start
+//         add script_data_ptr script_len is;
+//         // allocate memory to copy script data into
+//         aloc script_data_len;
+//         move to_return sp;
+//         // copy script data into above buffer
+//         mcp to_return script_data_ptr script_data_len;
+//         to_return: T
+//     }
+// }
 
 ////////////////////////////////////////
 // Inputs

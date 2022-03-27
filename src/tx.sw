@@ -129,10 +129,10 @@ pub fn tx_receipts_root() -> b256 {
 }
 
 /// Get the transaction script start offset.
-pub fn tx_script_start_offset() -> u64 {
-    asm(r1, r2: 10352) {
-        lw r1 r2 i0;
-        r1: u64
+pub fn tx_script_start_offset() -> u32 {
+    asm(r1) {
+        movi r1 i10352;
+        r1: u32
     }
 }
 

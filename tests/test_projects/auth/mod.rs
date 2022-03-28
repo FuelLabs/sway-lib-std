@@ -28,7 +28,6 @@ async fn is_external_from_sdk() {
 #[should_panic]
 async fn is_external_from_script() {
     let (auth_instance, _, _, _) = get_contracts().await;
-
     let result = auth_instance.is_caller_external().call().await.unwrap();
 
     assert_eq!(result.value, false);
@@ -67,16 +66,12 @@ async fn msg_sender_from_contract() {
 }
 
 #[tokio::test]
-#[ignore]
+
 async fn msg_sender_from_script() {
     get_contracts().await;
-    let _zero_id = authcallercontract_mod::ContractId { value: [0u8; 32] };
     let path_to_bin = "test_artifacts/auth_caller_script/out/debug/auth_caller_script.bin";
-
-    let _return_val = ez_script(path_to_bin).await;
-    // something is broken here. script is returning a u64 ?
-    // look at 'if let's in auth_testing_contract::returns_msg_sender
-    // assert_eq!(return_val, zero_id);
+    let return_val = ez_script(path_to_bin).await;
+    assert_eq!(return_val, 0);
 }
 
 async fn get_contracts() -> (AuthContract, ContractId, AuthCallerContract, ContractId) {

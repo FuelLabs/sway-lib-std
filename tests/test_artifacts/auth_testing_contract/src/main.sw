@@ -11,16 +11,7 @@ impl AuthTesting for Contract {
         caller_is_external()
     }
 
-    fn returns_msg_sender() -> ContractId {
-        let sender = msg_sender();
-        if let Result::Ok(v) = sender {
-            if let Sender::Id(i) = v {
-                v
-            } else {
-                ~ContractId::from(ZERO)
-            }
-        } else {
-            ~ContractId::from(ZERO)
-        }
+    fn returns_msg_sender() -> Result<ContractId, AuthError> {
+        msg_sender()
     }
 }

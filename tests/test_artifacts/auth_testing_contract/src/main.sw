@@ -20,12 +20,11 @@ impl AuthTesting for Contract {
         } else {
             let unwrapped = result.unwrap();
             if let Sender::ContractId(v) = unwrapped {
-                if v == expected_id {
-                    ret = true;
-                } else {
-                    ret = false;
-                }
-            }
+                assert(v == expected_id);
+                ret = true;
+            } else {
+                ret = false;
+            };
         };
 
         ret
@@ -39,11 +38,10 @@ impl AuthTesting for Contract {
         } else {
             let unwrapped = result.unwrap();
             if let Sender::Address(v) = unwrapped {
-                if v == expected_id {
-                    ret = true;
-                } else {
-                    ret = false;
-                }
+                assert(v == expected_id);
+                ret = true;
+            } else {
+                ret = false;
             }
         };
 

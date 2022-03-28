@@ -7,5 +7,5 @@ use std::result::*;
 
 abi AuthTesting {
     fn is_caller_external() -> bool;
-    fn returns_msg_sender() -> Result<Sender, AuthError>;
+    fn returns_msg_sender(expected_id: ContractId) -> bool;
 }

@@ -4,24 +4,17 @@ use auth_testing_abi::*;
 use std::contract_id::ContractId;
 use std::chain::auth::*;
 use std::constants::ZERO;
+use std::result::*;
 
 abi AuthCaller {
-    fn call_auth_contract(auth_id: ContractId) -> ContractId;
+    fn call_auth_contract(auth_id: ContractId, expected_id: ContractId) -> bool;
 }
 
 impl AuthCaller for Contract {
-    fn call_auth_contract(auth_id: ContractId) -> ContractId {
+    // TODO: improve this to return the ContractId itself.
+    // This is a workaround for the MissingData("cannot parse custom type with no components") error
+    fn call_auth_contract(auth_id: ContractId, expected_id: ContractId) -> bool {
         let auth_contract = abi(AuthTesting, ~ContractId::into(auth_id));
-        let result = auth_contract.returns_msg_sender();
-        if result.is_err() {
-            ~ContractId::from(ZERO)
-        } else {
-            let unwrapped = result.unwrap();
-            if let Sender::ContractId(v) = unwrapped {
-                v
-            } else {
-                ~ContractId::from(ZERO)
-            }
-        }
+        auth_contract.returns_msg_sender(expected_id)
     }
 }

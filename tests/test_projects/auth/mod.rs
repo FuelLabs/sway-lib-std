@@ -37,10 +37,9 @@ async fn is_external_from_script() {
 async fn msg_sender_from_sdk() {
     let (auth_instance, _, _, _) = get_contracts().await;
     let zero_address = authcontract_mod::ContractId { value: [0u8; 32] };
+    let result = auth_instance.returns_msg_sender(zero_address).call().await.unwrap();
 
-    let result = auth_instance.returns_msg_sender().call().await.unwrap();
-
-    assert_eq!(result.value, zero_address);
+    assert_eq!(result.value, false);
 }
 
 #[tokio::test]
@@ -56,13 +55,13 @@ async fn msg_sender_from_contract() {
     };
 
     let result = caller_instance
-        .call_auth_contract(auth_sway_id)
+        .call_auth_contract(auth_sway_id, caller_sway_id)
         .set_contracts(&[auth_id])
         .call()
         .await
         .unwrap();
 
-    assert_eq!(result.value, caller_sway_id);
+    assert_eq!(result.value, true);
 }
 
 #[tokio::test]

@@ -1,5 +1,5 @@
 use fuel_core::service::Config;
-use fuel_tx::{Salt, Transaction};
+use fuel_tx::{Salt, Transaction, Input, Output};
 use fuel_types::ContractId;
 use fuels_abigen_macro::abigen;
 use fuels_contract::{contract::Contract, parameters::TxParameters, script::Script};
@@ -69,12 +69,40 @@ async fn msg_sender_from_contract() {
 }
 
 #[tokio::test]
-#[ignore]
-// TODO: re-enable when it's possible to pass contract inputs to a script (similar to set_contracts())
 async fn msg_sender_from_script() {
-    get_contracts().await;
+    let (auth_instance, auth_id, _, _) = get_contracts().await;
+    println!("Auth instance: {:#?}", auth_instance);
+
     let path_to_bin = "test_artifacts/auth_caller_script/out/debug/auth_caller_script.bin";
-    let return_val = ez_script(path_to_bin).await;
+
+    let bin = read(path_to_bin);
+    let client = Provider::launch(Config::local_node()).await.unwrap();
+
+    let input = Input::Contract { utxo_id: Default::default(), balance_root: Default::default(), state_root: Default::default(), contract_id: auth_id };
+
+    let output = Output::Contract { input_index: Default::default(), balance_root: Default::default(), state_root: Default::default() };
+
+
+    let tx = Transaction::Script {
+        gas_price: 0,
+        gas_limit: 1_000_000,
+        maturity: 0,
+        byte_price: 0,
+        receipts_root: Default::default(),
+        script: bin.unwrap(), // Here we pass the compiled script into the transaction
+        script_data: vec![],
+        inputs: vec![input],
+        outputs: vec![output],
+        witnesses: vec![vec![].into()],
+        metadata: None,
+    };
+
+    let script = Script::new(tx);
+    let receipts = script.call(&client).await.unwrap();
+
+    let return_val =receipts[0].val().unwrap();
+
+    // let return_val = ez_script(path_to_bin).await;
     assert_eq!(return_val, 0);
 }
 

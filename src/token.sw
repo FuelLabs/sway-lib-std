@@ -34,16 +34,16 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
     // TransactionScript outputsCount has a 56 byte(7 words * 8 bytes) offset
     // Transaction Script: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#transactionscript
     // Output types: https://github.com/FuelLabs/fuel-specs/blob/master/specs/protocol/tx_format.md#output
-    const OUTPUT_LENGTH_LOCATION = 56;
-    const OUTPUT_VARIABLE_TYPE = 4u8;
+    const OUTPUT_LENGTH_LOCATION = 10304;
+    const OUTPUT_VARIABLE_TYPE = 4;
 
     // get length of outputs from TransactionScript outputsCount:
-    let length: u8 = asm(outputs_length, outputs_length_ptr: OUTPUT_LENGTH_LOCATION) {
-        lb outputs_length outputs_length_ptr i0;
-        outputs_length: u8
+    let length: u64 = asm(outputs_length, outputs_length_ptr: OUTPUT_LENGTH_LOCATION) {
+        lw outputs_length outputs_length_ptr i0;
+        outputs_length: u64
     };
     // maintain a manual index as we only have `while` loops in sway atm:
-    let mut index: u8 = 0u8;
+    let mut index: u64 = 0;
     let mut output_index = 0;
     let mut output_found = false;
 
@@ -56,32 +56,28 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
         };
 
         let type = asm(offset: output_start, t) {
-            lb t offset i0; // load the type of the output at 'offset' into t
-            t: u8
+            lw t offset i0; // load the type of the output at 'offset' into t
+            t: u64
         };
 
         // if an ouput is found of type `OutputVariable`:
         if type == OUTPUT_VARIABLE_TYPE {
-            let amount = asm(n: index, a, amount_ptr, output: output_start) {
+            let amount_inner = asm(n: index, a, amount_ptr, output: output_start) {
                 addi amount_ptr output i40;
                 lw a amount_ptr i0;
                 a: u64
             };
 
             // && if the amount is zero:
-            if amount == 0 {
+            if amount_inner == 0 {
                 // then store the index of the output and record the fact that we found a suitable output.
                 output_index = index;
                 output_found = true;
                 // todo: use "break" keyword when it lands ( tracked here: https://github.com/FuelLabs/sway/issues/587 )
                 index = length; // break early and use the output we found
-            } else {
-                // otherwise, increment the index and continue the loop.
-                index = index + 1;
             };
-        } else {
-            index = length; // break early as there are no suitable outputs.
         };
+        index = index + 1; // break early as there are no suitable outputs.
     }
 
     if !output_found {
@@ -89,7 +85,7 @@ pub fn transfer_to_output(amount: u64, asset_id: ContractId, recipient: Address)
         panic(0);
     } else {
         // perform the transfer
-        asm(amnt: amount, id: asset_id.value, recipient: recipient.value, output: index) {
+        asm(amnt: amount, id: asset_id.value, recipient: recipient.value, output: output_index) {
             tro recipient output amnt id;
         };
     }

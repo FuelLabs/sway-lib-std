@@ -7,7 +7,7 @@ do
 if [ -d "${f}" ];
 then
 echo "building test $f..."
-  ../target/debug/forc build -o temp -p $f
+  forc build -o temp -p $f
   if ! [ -f temp ];
   then
   echo "Failed to build $f"
@@ -18,4 +18,4 @@ fi
 done
 
 echo "building project..."
-cd tests && ../../target/debug/forc build
+cd tests && forc build

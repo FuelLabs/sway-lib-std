@@ -65,7 +65,8 @@ async fn msg_sender_from_contract() {
 }
 
 #[tokio::test]
-
+#[ignore]
+// TODO: re-enable when it's possible to pass contract inputs to a script (similar to set_contracts())
 async fn msg_sender_from_script() {
     get_contracts().await;
     let path_to_bin = "test_artifacts/auth_caller_script/out/debug/auth_caller_script.bin";

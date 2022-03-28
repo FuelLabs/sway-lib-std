@@ -4,6 +4,7 @@ use fuels_abigen_macro::abigen;
 use fuels_contract::{contract::Contract, parameters::TxParameters};
 use fuels_signers::util::test_helpers::setup_test_provider_and_wallet;
 use fuels_signers::wallet::Wallet;
+use fuels_signers::Signer;
 
 abigen!(
     AuthContract,
@@ -32,10 +33,12 @@ async fn is_external_from_script() {
 
 #[tokio::test]
 async fn msg_sender_from_sdk() {
-    let (auth_instance, _, _, _, _) = get_contracts().await;
-    let zero_address = authcontract_mod::ContractId { value: [0u8; 32] };
+    let (auth_instance, _, _, _, wallet) = get_contracts().await;
+    let addr = authcontract_mod::Address {
+        value: wallet.address().into(),
+    };
     let result = auth_instance
-        .returns_msg_sender(zero_address)
+        .returns_msg_sender_address(addr)
         .call()
         .await
         .unwrap();

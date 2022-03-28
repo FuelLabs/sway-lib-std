@@ -27,11 +27,3 @@ pub fn log_u8(val: u8) {
         log r1 zero zero zero;
     }
 }
-
-pub fn assert(a: bool) {
-    if !a {
-        panic(0);
-    } else {
-        ()
-    }
-}

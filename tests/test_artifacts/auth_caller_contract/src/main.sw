@@ -18,7 +18,7 @@ impl AuthCaller for Contract {
             ~ContractId::from(ZERO)
         } else {
             let unwrapped = result.unwrap();
-            if let Sender::Id(v) = unwrapped {
+            if let Sender::ContractId(v) = unwrapped {
                 v
             } else {
                 ~ContractId::from(ZERO)
